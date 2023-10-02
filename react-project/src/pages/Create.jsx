@@ -1,7 +1,7 @@
 import React from "react";
 import IndexNavBar from "../components/IndexNavBar";
-import Login from "../components/Login";
 import App from "../App";
+import CreateUser from "../components/CreateUser";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
   // import {Link} from "react-router-dom"
 
@@ -10,7 +10,7 @@ const Create = () => {
     <div> 
     <IndexNavBar></IndexNavBar>
     
-    <Login></Login>
+    <CreateUser></CreateUser>
     </div>
   );
 };
