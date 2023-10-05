@@ -1,0 +1,6 @@
+.login-align{
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+}
