@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const backendURL = 'http://localhost:5000'; // or your server's actual address
 const CreateUser = () => {
   const [inputUser, setInputUser] = useState("");
   const [inputPass, setInputPass] = useState("");
