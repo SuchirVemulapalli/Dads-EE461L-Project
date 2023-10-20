@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Button } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import './Login.css';
 
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
@@ -31,7 +34,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login">
       <input
         type="text"
         placeholder="Username"
@@ -50,9 +53,9 @@ const Login = () => {
         id="password"
       ></input>
       <br></br>
-      <button type="button" className="btn btn-primary" onClick={verify}>
+      <Button variant="contained" onClick={verify}>
         Login
-      </button>
+      </Button>
     </div>
   );
 };
