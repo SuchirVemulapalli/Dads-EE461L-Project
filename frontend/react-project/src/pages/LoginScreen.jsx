@@ -4,7 +4,7 @@ import Login from "../components/Login";
 import "../App.css"
 const LoginScreen = () => {
   return (
-    <div class='login-align'>
+    <div className='login-align'>
         <IndexNavBar></IndexNavBar>
         <Login></Login>
     </div>

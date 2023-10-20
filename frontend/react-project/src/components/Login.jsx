@@ -1,33 +1,39 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
 
   const verify = () => {
-    fetch("/api/login", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application.json",
-      },
-      body: JSON.stringify({
-        user: inputUser,
-        pass: inputPass,
-      }),
-    })
-      .then(res=> res.json())
-      .then(data =>{
-        const status = data.status
-        if(status == "success"){
-  
+    axios
+      .post(
+        "http://127.0.0.1:5000/login",
+        {
+          user: inputUser,
+          pass: inputPass,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        else{
-          
+      )
+      .then((response) => {
+        // Check if the response status is OK (status code 200)
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
         }
+        return response.data; // Axios automatically parses the response data as JSON
       })
-      .catch(error =>{
-        console.log("Error", error)
+      .then((data) => {
+        // Work with the JSON data here
+        console.log(data);
       })
+      .catch((error) => {
+        // Handle errors, e.g., network errors or API errors
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
 
   return (
@@ -37,7 +43,6 @@ const Login = () => {
         placeholder="Username"
         value={inputUser}
         onChange={(e) => setInputUser(e.target.value)}
-        name="username"
         id="username"
       ></input>
       <br></br>
@@ -46,7 +51,6 @@ const Login = () => {
         placeholder="Password"
         value={inputPass}
         onChange={(e) => setInputPass(e.target.value)}
-        name="password"
         id="password"
       ></input>
       <br></br>
