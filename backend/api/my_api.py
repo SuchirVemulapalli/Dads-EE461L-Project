@@ -10,6 +10,7 @@ app.config['MONGO_URI'] = "mongodb+srv://test:test@cluster0.iku4q9b.mongodb.net/
 client = MongoClient(app.config['MONGO_URI'])
 db = client["UserInfo"]
 collection = db["Users"]
+#fix
 
 
 @app.route('/create-user', methods=["POST"])
