@@ -1,55 +1,43 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const backendURL = 'http://localhost:5000'; // or your server's actual address
 const CreateUser = () => {
   const [inputUser, setInputUser] = useState("");
   const [inputPass, setInputPass] = useState("");
   const [inputConfirm, setInputConfirm] = useState("");
-  
-  // const testAPI = () => {
-  //   fetch('http://localhost:5000/api/test',{
-  //     method: 'GET',
-  //   })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     // Set the response message in state
-  //     console.log(data);
-  //   })
-  //   .catch((error) => {
-  //     console.error('Error:', error);
-  //   });    
-  // }
+
   const addUser = () => {
-    fetch('http://localhost:5000/api/createUser', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Use 'application/json' content type
-      },
-      body: JSON.stringify({
-        user: inputUser,
-        pass: inputPass,
-        confirm: inputConfirm,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
+    axios
+      .post(
+        "http://127.0.0.1:5000/create-user",
+        {
+          user: inputUser,
+          pass: inputPass,
+          confirm: inputConfirm,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        return res.json();
+      )
+      .then((response) => {
+        // Check if the response status is OK (status code 200)
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
+        }
+        return response.data; // Axios automatically parses the response data as JSON
       })
       .then((data) => {
-        const status = data.status;
-        if (status === 'success') {
-          console.log('success');
-        } else {
-          console.log('failure');
-        }
+        // Work with the JSON data here
+        console.log(data);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        // Handle errors, e.g., network errors or API errors
+        console.error("There was a problem with the fetch operation:", error);
       });
   };
-  
 
   return (
     <div>

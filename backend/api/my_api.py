@@ -3,26 +3,17 @@ from pymongo import MongoClient
 from flask import Flask, request, jsonify   
 from flask_cors import CORS, cross_origin   
 
-cors_config = {
-    "origins" : ["http://localhost:5173"],
-    "methods" : ["OPTIONS", "GET", "POST"],
-    "allow_headers" : ["Authorization", "Content-Type"]
-}
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": cors_config}) #Add your url of project here
+cors = CORS(app)
 
-app.config['MONGO_URI'] = "mongodb+srv://akim678910:2812368663a@cluster0.b9lpktw.mongodb.net/?retryWrites=true&w=majority"
+app.config['MONGO_URI'] = "mongodb+srv://test:test@cluster0.iku4q9b.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(app.config['MONGO_URI'])
-db = client["test"]
-collection = db["test"]
+db = client["UserInfo"]
+collection = db["Users"]
 
-@app.route('/api/test', methods = ['GET'])
+
+@app.route('/create-user', methods=["POST"])
 @cross_origin()
-def test():
-    response_data = {"message": "API is working!"}
-    return jsonify(response_data)
-
-@app.route('/api/createUser', methods=["POST"])
 def create_user():
     #getting user information
     print("server received")
@@ -37,6 +28,8 @@ def create_user():
     else:
         collection.insert_one({"user" : username, "pass" : password})
         return jsonify({"status": "success"})
+    
+
 
 @app.route('/api/login', methods=['GET'])
 def login():
