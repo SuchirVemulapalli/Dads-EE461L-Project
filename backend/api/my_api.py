@@ -10,10 +10,7 @@ app.config['MONGO_URI'] = "mongodb+srv://test:test@cluster0.iku4q9b.mongodb.net/
 client = MongoClient(app.config['MONGO_URI'])
 db = client["UserInfo"]
 collection = db["Users"]
-<<<<<<< HEAD
-=======
 #fix
->>>>>>> main
 
 
 @app.route('/create-user', methods=["POST"])
@@ -35,16 +32,20 @@ def create_user():
     
 
 
-@app.route('/api/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
+@cross_origin()
 def login():
     userdata = request.json
     username = userdata.get("user")
     password = userdata.get("pass")
     doc = collection.find_one({"user": username})
-    userPass = doc.get("pass")
-    if password == userPass:
-        return jsonify({"status": "success"})
+    if doc:
+        userPass = doc.get("pass")
+        if password == userPass:
+            return jsonify({"status": "success"})
+        else:
+            return jsonify({"status": "failure"})
     else:
-        return jsonify({"status": "failure"})
+        return jsonify({"status" : "failure"})
 if __name__ == "__main__":
     app.run(debug=True)
