@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
+  const navigate = useNavigate(); // Initialize the navigate function using useNavigate
+
 
   const verify = () => {
     axios
@@ -31,11 +33,12 @@ const Login = () => {
         // Work with the JSON data here
         //if the login is successful send to landing page
         if(data.status === "success"){
-          // nav("/landing");
+          console.log("success")
+          navigate("/landing");
         }
         //tell user why the login failed
         else{
-
+          console.log("failure")
         }
       })
       .catch((error) => {
