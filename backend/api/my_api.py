@@ -42,6 +42,7 @@ def login():
     if doc:
         userPass = doc.get("pass")
         if password == userPass:
+            #the user exists and the password matches
             return jsonify({"status": "success"})
         else:
             return jsonify({"status": "failure"})

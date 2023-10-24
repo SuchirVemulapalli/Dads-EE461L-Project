@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
@@ -28,7 +29,14 @@ const Login = () => {
       })
       .then((data) => {
         // Work with the JSON data here
-        console.log(data);
+        //if the login is successful send to landing page
+        if(data.status == "success"){
+          nav("/landing");
+        }
+        //tell user why the login failed
+        else{
+
+        }
       })
       .catch((error) => {
         // Handle errors, e.g., network errors or API errors
