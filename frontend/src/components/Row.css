@@ -1,0 +1,15 @@
+/* Row.css */
+.row-container {
+    display: flex; /* Use flexbox to create a row layout */
+    align-items: center; /* Center items vertically in the row */
+    border-style: solid;
+    margin: 20px;
+  }
+  
+  .rowElement{
+    padding: 20px;
+  }
+
+  #joinButton{
+    color: blue;  
+  }
