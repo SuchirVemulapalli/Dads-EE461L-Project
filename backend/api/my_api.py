@@ -46,25 +46,22 @@ def login():
         if password == userPass:
             # the user exists and the password matches
             return jsonify({"status": "success"})
+        
         else:
             return jsonify({"status": "failure"})
     else:
         return jsonify({"status": "failure"})
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
 @app.route("/get-docs", methods=["GET"])
-@cross_origin
+@cross_origin()
 def getDocs():
     db = client["Projects"]
     res = defaultdict(lambda: [0, 0])
     if db.list_collection_names():
         for topic in db.list_collection_names():
             collection = db[topic]
-            for doc in collection:
+            for doc in collection.find():
                 temp = {}
                 temp["name"] = doc["name"]
                 temp["quantity"] = doc["quantity"]
@@ -77,3 +74,7 @@ def getDocs():
 
     # creates a hashmap to key: topic, value: array
     # array[0] is a hashmap of HWSet1 and array[1] is a hashmap of HWSet2
+    return jsonify({"status" : "none"})
+
+if __name__ == "__main__":
+    app.run(debug=True)

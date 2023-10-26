@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Row from "./Row";
 import "./Project.css";
-import axios from 'axios'
+import axios, { getAdapter } from 'axios'
 const DataTable = () => {
     const [topics, setTopics] = useState([]);
     const [map, setMap] = useState({})
-    useEffect(() => {
-        axios.get('http://127.0.0.1:5000/get-docs')
+    
+    const getData = () =>{
+      axios.get('http://127.0.0.1:5000/get-docs')
         .then((response) => {
             // Check if the response status is OK (status code 200)
             if (response.status !== 200) {
@@ -15,19 +16,24 @@ const DataTable = () => {
             return response.data; // Axios automatically parses the response data as JSON
           })
         .then((data) => {
+          console.log(data)
         // Work with the JSON data here
-            console.log(data);
-            if(data.status && data.status === "none"){
-              //if there are no collections
-            }
-            else{
-              setTopics(data.topics)
-              setMap(data.map)
-            }
+            // console.log("hello")
+            // console.log(data);
+            // if(data.status && data.status === "none"){
+            //   //if there are no collections
+            // }
+            // else{
+            //   setTopics(data.topics)
+            //   setMap(data.map)
+            // }
         })
         .catch((error) => {
             console.error('Error fetching data:', error);
         });
+    }
+    useEffect(() => {
+        getData()
     }, []);
     
     const props = {
