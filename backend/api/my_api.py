@@ -25,12 +25,12 @@ def create_user():
     username = userdata.get("user")
     password = userdata.get("pass")
     confirm = userdata.get("confirm")
-    if collection.count_documents({"user": username}) > 0:
+    if collection.count_documents({"user": username}) > 0: #if the username alr exists in the db
         return jsonify({"status": "failure"})
-    elif password != confirm:
+    elif password != confirm: #if the confirm password doesn't match
         return jsonify({"status": "failure"})
     else:
-        collection.insert_one({"user": username, "pass": password})
+        collection.insert_one({"user": username, "pass": password, "projects": ["Project 1"]}) #projects is the projects that the user has access to
         return jsonify({"status": "success"})
 
 
@@ -53,28 +53,176 @@ def login():
         return jsonify({"status": "failure"})
 
 
-@app.route("/get-docs", methods=["GET"])
+@app.route("/get-docs", methods=["POST"])
 @cross_origin()
 def getDocs():
-    db = client["Projects"]
-    res = defaultdict(lambda: [0, 0])
-    if db.list_collection_names():
-        for topic in db.list_collection_names():
-            collection = db[topic]
-            for doc in collection.find():
-                temp = {}
-                temp["name"] = doc["name"]
-                temp["quantity"] = doc["quantity"]
-                temp["capacity"] = doc["capacity"]
-                res[topic][0] = temp
-        return jsonify({"map": res, "topics": db.list_collection_names()})
-    else:
-        # if there are no topics in the Project DB
-        return jsonify({"status": "none"})
+    #accessing databases
+    projectDB = client["ProjectData"] #accessing projectdb
+    userDB = client["UserInfo"] #accessing userDB
 
-    # creates a hashmap to key: topic, value: array
-    # array[0] is a hashmap of HWSet1 and array[1] is a hashmap of HWSet2
-    return jsonify({"status" : "none"})
+    #accessing collections
+    projects = projectDB["Projects"]
+    hardware = projectDB["HardwareSets"]
+    users = userDB["Users"]
+
+
+    #getting the username from the localstorage
+    userdata = request.json
+    username = userdata.get("user")
+    
+    doc = users.find_one({"user": username})
+    
+    #get list of projects that the user has access to
+    validProjects = doc.get("projects")
+
+    #what we are returning
+    status = None
+    hardwareMap = {} #map where key: hardwareSet number and value = map of hardware set attributes
+    projectMap = defaultdict(lambda: [0, 0]) #creates a map where: key = project id and value = arr of size 2 
+    userMap = defaultdict(list) #map where: key = projectid and value = list of users on the project
+
+    if len(validProjects) != 0:
+        status = "success"
+        for projectid in validProjects: #for each project
+            doc = projects.find_one({"projectID": projectid})
+            if doc:
+                
+                HWSet1 = doc.get("HWSet1") # number of items used in HWSet1
+                HWSet2 = doc.get("HWSet2") # number of items used in HWSet2
+                
+                userList = doc.get("users") #list of users that have access to the project
+
+                projectMap[projectid] = [HWSet1, HWSet2]
+                userMap[projectid] = userList
+            else:
+                print("none") #debugging purposes
+
+    else:
+        #there are no projects that the user has joined
+        status = "none"
+
+    
+    #now we have to store our shared HWSet data
+
+    allSets = hardware.find()
+    for doc in allSets:
+        map = {
+            "quantity" : doc.get('quantity'),
+            "capacity" : doc.get('capacity')
+        }
+        #mapping the hardware set id to the attributes
+        hardwareMap[doc.get('setID')] = map
+
+    return jsonify({
+        "status" : status,
+        "hardwareMap" : hardwareMap,
+        "projectMap" : projectMap,
+        "userMap" : userMap,
+        "projectList" : validProjects #list of user's projects
+    })
+        
+@app.route("/create-project", methods=["POST"])
+@cross_origin()
+def createProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    hardwareSets = projectDB['HardwareSets']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    projectID = userdata.get("projectID")
+    HWSet1 = userdata.get("HWSet1")
+    HWSet2 = userdata.get("HWSet2")
+    username = userdata.get("user")
+
+    #hardwareset info
+    doc1 = hardwareSets.find_one({"setID" : "HWSet1"})
+    doc2 = hardwareSets.find_one({"setID" : "HWSet2"})
+    remain1 = doc1.get("quantity")
+    remain2 = doc2.get("quantity")
+    print(remain1)
+    print(remain2)
+    print(HWSet1)
+    if projects.count_documents({"projectID" : projectID}) > 0: #the projectid alr exists
+        return jsonify({"status": "failure"})
+    elif int(HWSet1) > int(remain1) or int(HWSet2) > int(remain2): #there arent enough materials
+        return jsonify({"status": "failure"})
+    else:
+        #add the new document to the project collection
+        doc = {
+        "projectID" : projectID,
+        "HWSet1" : HWSet1,
+        "HWSet2" : HWSet2,
+        "users" : [username]
+        }
+        projects.insert_one(doc)
+
+        #make updates to the quantity values in the HWSets
+        filter = {'setID': "HWSet1"}
+        update = {'$set': {'quantity': int(remain1) - int(HWSet1)}}
+        result = hardwareSets.update_one(filter, update)
+
+        filter = {'setID': "HWSet2"}
+        update = {'$set': {'quantity': int(remain2) - int(HWSet2)}}
+        result = hardwareSets.update_one(filter, update)
+        #add the project to the user's project list in user collection
+
+        filter = {'user' : username}
+        doc = users.find_one({'user' : username})
+        arr = doc.get("projects")
+        arr.append(projectID)
+        update = {'$set': {'projects': arr}}
+        result = users.update_one(filter, update)
+        return jsonify({"status": "success"})
+    
+@app.route("/join-project", methods=["POST"])
+@cross_origin()
+def joinProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    username = userdata.get("user")
+    projectID = userdata.get("projectID")
+
+    #adding the user to the project user list
+    doc = projects.find_one({"projectID": projectID})
+    if not doc:  #if the project doesn't exist
+        return jsonify({"status" : "failure"})
+    arr = doc.get("users")
+    seen = set(arr)
+    if username in seen: #the user is alr in the project
+        return jsonify({"status" : "failure"})
+    arr.append(username)
+    filter = {'projectID' : projectID}
+    update = {'$set': {'users': arr}}
+    result = projects.update_one(filter, update)
+
+    #adding the project to the user's project list
+    doc = users.find_one({"user": username})
+    arr = doc.get("projects")
+    seen = set(arr)
+    if projectID in seen: #the user is alr in the project
+        return jsonify({"status" : "failure"})
+    arr.append(projectID)
+    filter = {"user": username}
+    update = {'$set': {'projects': arr}}
+    result = users.update_one(filter, update)
+
+    return jsonify({"status" : "success"})
 
 if __name__ == "__main__":
     app.run(debug=True)

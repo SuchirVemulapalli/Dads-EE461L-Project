@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Create from "./pages/Create.js";
 import LoginScreen from "./pages/LoginScreen.js";
 import Landing from "./pages/Landing.js";
-
+import CreateProject from "./pages/CreateProject.js";
+import JoinProject from "./pages/JoinProject.js";
 const App = () => {
   
   //add new pages here
@@ -19,6 +20,14 @@ const App = () => {
     {
       path: "landing",
       element: <Landing />,
+    },
+    {
+      path: "create-project",
+      element: <CreateProject />,
+    },
+    {
+      path: "join-project",
+      element: <JoinProject />,
     },
   ])
   return (
