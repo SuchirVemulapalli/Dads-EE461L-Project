@@ -13,6 +13,7 @@ const MakeProject = ({prop}) => {
           projectID: projectID,
           HWSet1: HWSet1,
           HWSet2: HWSet2,
+          user: localStorage.getItem('username')
         },
         {
           headers: {

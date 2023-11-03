@@ -121,7 +121,65 @@ def getDocs():
         "projectList" : validProjects #list of user's projects
     })
         
-        
+@app.route("/create-project", methods=["POST"])
+@cross_origin()
+def createProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    hardwareSets = projectDB['HardwareSets']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    projectID = userdata.get("projectID")
+    HWSet1 = userdata.get("HWSet1")
+    HWSet2 = userdata.get("HWSet2")
+    username = userdata.get("user")
+
+    #hardwareset info
+    doc1 = hardwareSets.find_one({"setID" : "HWSet1"})
+    doc2 = hardwareSets.find_one({"setID" : "HWSet2"})
+    remain1 = doc1.get("quantity")
+    remain2 = doc2.get("quantity")
+    print(remain1)
+    print(remain2)
+    print(HWSet1)
+    if projects.count_documents({"projectID" : projectID}) > 0: #the projectid alr exists
+        return jsonify({"status": "failure"})
+    elif int(HWSet1) > int(remain1) or int(HWSet2) > int(remain2): #there arent enough materials
+        return jsonify({"status": "failure"})
+    else:
+        #add the new document to the project collection
+        doc = {
+        "projectID" : projectID,
+        "HWSet1" : HWSet1,
+        "HWSet2" : HWSet2,
+        "users" : [username]
+        }
+        projects.insert_one(doc)
+
+        #make updates to the quantity values in the HWSets
+        filter = {'setID': "HWSet1"}
+        update = {'$set': {'quantity': int(remain1) - int(HWSet1)}}
+        result = hardwareSets.update_one(filter, update)
+
+        filter = {'setID': "HWSet2"}
+        update = {'$set': {'quantity': int(remain2) - int(HWSet2)}}
+        result = hardwareSets.update_one(filter, update)
+        #add the project to the user's project list in user collection
+
+        filter = {'user' : username}
+        doc = users.find_one({'user' : username})
+        arr = doc.get("projects")
+        arr.append(projectID)
+        update = {'$set': {'projects': arr}}
+        result = users.update_one(filter, update)
+        return jsonify({"status": "success"})
     
 
 if __name__ == "__main__":
