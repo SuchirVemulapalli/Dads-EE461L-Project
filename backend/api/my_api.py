@@ -25,12 +25,12 @@ def create_user():
     username = userdata.get("user")
     password = userdata.get("pass")
     confirm = userdata.get("confirm")
-    if collection.count_documents({"user": username}) > 0:
+    if collection.count_documents({"user": username}) > 0: #if the username alr exists in the db
         return jsonify({"status": "failure"})
-    elif password != confirm:
+    elif password != confirm: #if the confirm password doesn't match
         return jsonify({"status": "failure"})
     else:
-        collection.insert_one({"user": username, "pass": password})
+        collection.insert_one({"user": username, "pass": password, "projects": []}) #projects is the projects that the user has access to
         return jsonify({"status": "success"})
 
 
