@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Create from "./pages/Create.js";
 import LoginScreen from "./pages/LoginScreen.js";
 import Landing from "./pages/Landing.js";
+import CreateProject from "./pages/CreateProject.js";
 
 const App = () => {
   
@@ -19,6 +20,10 @@ const App = () => {
     {
       path: "landing",
       element: <Landing />,
+    },
+    {
+      path: "create-project",
+      element: <CreateProject />,
     },
   ])
   return (
