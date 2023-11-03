@@ -1,0 +1,8 @@
+.itemRow{
+    display: flex; /* Use flexbox to create a row layout */
+    align-items: center; /* Center items vertically in the row */
+}
+
+.itemElement{
+    margin :10px
+}
