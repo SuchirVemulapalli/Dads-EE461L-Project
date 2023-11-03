@@ -181,6 +181,48 @@ def createProject():
         result = users.update_one(filter, update)
         return jsonify({"status": "success"})
     
+@app.route("/join-project", methods=["POST"])
+@cross_origin()
+def joinProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    username = userdata.get("user")
+    projectID = userdata.get("projectID")
+
+    #adding the user to the project user list
+    doc = projects.find_one({"projectID": projectID})
+    if not doc:  #if the project doesn't exist
+        return jsonify({"status" : "failure"})
+    arr = doc.get("users")
+    seen = set(arr)
+    if username in seen: #the user is alr in the project
+        return jsonify({"status" : "failure"})
+    arr.append(username)
+    filter = {'projectID' : projectID}
+    update = {'$set': {'users': arr}}
+    result = projects.update_one(filter, update)
+
+    #adding the project to the user's project list
+    doc = users.find_one({"user": username})
+    arr = doc.get("projects")
+    seen = set(arr)
+    if projectID in seen: #the user is alr in the project
+        return jsonify({"status" : "failure"})
+    arr.append(projectID)
+    filter = {"user": username}
+    update = {'$set': {'projects': arr}}
+    result = users.update_one(filter, update)
+
+    return jsonify({"status" : "success"})
 
 if __name__ == "__main__":
     app.run(debug=True)
