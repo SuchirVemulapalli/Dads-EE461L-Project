@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "./Row.css";
 import Item from "./Item";
-const Row = ({data}) => {
+const Row = ({props}) => {
+  const { projectid, projectMap, userMap } = props;
   const [users, setUsers] = useState([
-    ["list", " of", " authorized", " users"],
+    userMap[projectid]
   ]);
   const [formatted, setFormatted] = useState(users.join(" , "));
   const [buttonText, setButtonText] = useState({color: "blue"})
@@ -18,18 +19,15 @@ const Row = ({data}) => {
     }
   }
 
-  const prop = {
-    value: 50
-  };
 
   return (
     <div>
       <div className="row-container">
-        <h2 className="rowElement">{data.name}</h2>
+        <h2 className="rowElement">{props.projectid}</h2>
         <h4 className="rowElement">{formatted}</h4>
         <div className="rowElement">
-          <Item data = {prop}></Item>
-          <Item data = {prop}></Item>
+          <Item prop = {projectMap[projectid][0]}></Item>
+          <Item prop = {projectMap[projectid][1]}></Item>
         </div>
         <button className="rowElement" onClick = {changeJoin} id= "joinButton">{buttonValue}</button>
       </div>
