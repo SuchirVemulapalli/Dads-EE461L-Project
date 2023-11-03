@@ -5,17 +5,19 @@ import axios, { getAdapter } from 'axios'
 const DataTable = () => {
     const [topics, setTopics] = useState([]);
     const [map, setMap] = useState({})
-    
     const getData = () =>{
-      axios.get('http://127.0.0.1:5000/get-docs',
-      {
-        user: localStorage.getItem('username')
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+      axios
+      .post(
+        "http://127.0.0.1:5000/get-docs",
+        {
+          user: localStorage.getItem('username')
         },
-      })
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((response) => {
             // Check if the response status is OK (status code 200)
             if (response.status !== 200) {

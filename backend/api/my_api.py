@@ -30,7 +30,7 @@ def create_user():
     elif password != confirm: #if the confirm password doesn't match
         return jsonify({"status": "failure"})
     else:
-        collection.insert_one({"user": username, "pass": password, "projects": []}) #projects is the projects that the user has access to
+        collection.insert_one({"user": username, "pass": password, "projects": ["Project 1"]}) #projects is the projects that the user has access to
         return jsonify({"status": "success"})
 
 
@@ -53,7 +53,7 @@ def login():
         return jsonify({"status": "failure"})
 
 
-@app.route("/get-docs", methods=["GET"])
+@app.route("/get-docs", methods=["POST"])
 @cross_origin()
 def getDocs():
     #accessing databases
@@ -61,16 +61,17 @@ def getDocs():
     userDB = client["UserInfo"] #accessing userDB
 
     #accessing collections
-    projects = db["Projects"]
-    hardware = db["HardwareSets"]
+    projects = projectDB["Projects"]
+    hardware = projectDB["HardwareSets"]
     users = userDB["Users"]
+
 
     #getting the username from the localstorage
     userdata = request.json
     username = userdata.get("user")
-
+    
     doc = users.find_one({"user": username})
-
+    
     #get list of projects that the user has access to
     validProjects = doc.get("projects")
 
@@ -80,25 +81,26 @@ def getDocs():
     projectMap = defaultdict(lambda: [0, 0]) #creates a map where: key = project id and value = arr of size 2 
     userMap = defaultdict(list) #map where: key = projectid and value = list of users on the project
 
-
     if len(validProjects) != 0:
         status = "success"
         for projectid in validProjects: #for each project
             doc = projects.find_one({"projectID": projectid})
-            HWSet1 = doc.get("HWSet1") # number of items used in HWSet1
-            HWSet2 = doc.get("HWSet2") # number of items used in HWSet2
-            
-            userList = doc.get("users") #list of users that have access to the project
+            if doc:
+                
+                HWSet1 = doc.get("HWSet1") # number of items used in HWSet1
+                HWSet2 = doc.get("HWSet2") # number of items used in HWSet2
+                
+                userList = doc.get("users") #list of users that have access to the project
 
-            hardwareMap[projectid] = [HWSet1, HWSet2]
-            userMap[project] = userList
-        
-        sets = 
-
+                projectMap[projectid] = [HWSet1, HWSet2]
+                userMap[projectid] = userList
+            else:
+                print("none") #debugging purposes
 
     else:
         #there are no projects that the user has joined
         status = "none"
+
     
     #now we have to store our shared HWSet data
 
@@ -110,11 +112,13 @@ def getDocs():
         }
         #mapping the hardware set id to the attributes
         hardwareMap[doc.get('setID')] = map
+
     return jsonify({
         "status" : status,
         "hardwareMap" : hardwareMap,
         "projectMap" : projectMap,
-        "userMap" : userMap
+        "userMap" : userMap,
+        "projectList" : validProjects #list of user's projects
     })
         
         
