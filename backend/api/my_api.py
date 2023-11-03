@@ -56,25 +56,69 @@ def login():
 @app.route("/get-docs", methods=["GET"])
 @cross_origin()
 def getDocs():
-    db = client["Projects"]
-    res = defaultdict(lambda: [0, 0])
-    if db.list_collection_names():
-        for topic in db.list_collection_names():
-            collection = db[topic]
-            for doc in collection.find():
-                temp = {}
-                temp["name"] = doc["name"]
-                temp["quantity"] = doc["quantity"]
-                temp["capacity"] = doc["capacity"]
-                res[topic][0] = temp
-        return jsonify({"map": res, "topics": db.list_collection_names()})
-    else:
-        # if there are no topics in the Project DB
-        return jsonify({"status": "none"})
+    #accessing databases
+    projectDB = client["ProjectData"] #accessing projectdb
+    userDB = client["UserInfo"] #accessing userDB
 
-    # creates a hashmap to key: topic, value: array
-    # array[0] is a hashmap of HWSet1 and array[1] is a hashmap of HWSet2
-    return jsonify({"status" : "none"})
+    #accessing collections
+    projects = db["Projects"]
+    hardware = db["HardwareSets"]
+    users = userDB["Users"]
+
+    #getting the username from the localstorage
+    userdata = request.json
+    username = userdata.get("user")
+
+    doc = users.find_one({"user": username})
+
+    #get list of projects that the user has access to
+    validProjects = doc.get("projects")
+
+    #what we are returning
+    status = None
+    hardwareMap = {} #map where key: hardwareSet number and value = map of hardware set attributes
+    projectMap = defaultdict(lambda: [0, 0]) #creates a map where: key = project id and value = arr of size 2 
+    userMap = defaultdict(list) #map where: key = projectid and value = list of users on the project
+
+
+    if len(validProjects) != 0:
+        status = "success"
+        for projectid in validProjects: #for each project
+            doc = projects.find_one({"projectID": projectid})
+            HWSet1 = doc.get("HWSet1") # number of items used in HWSet1
+            HWSet2 = doc.get("HWSet2") # number of items used in HWSet2
+            
+            userList = doc.get("users") #list of users that have access to the project
+
+            hardwareMap[projectid] = [HWSet1, HWSet2]
+            userMap[project] = userList
+        
+        sets = 
+
+
+    else:
+        #there are no projects that the user has joined
+        status = "none"
+    
+    #now we have to store our shared HWSet data
+
+    allSets = hardware.find()
+    for doc in allSets:
+        map = {
+            "quantity" : doc.get('quantity'),
+            "capacity" : doc.get('capacity')
+        }
+        #mapping the hardware set id to the attributes
+        hardwareMap[doc.get('setID')] = map
+    return jsonify({
+        "status" : status,
+        "hardwareMap" : hardwareMap,
+        "projectMap" : projectMap,
+        "userMap" : userMap
+    })
+        
+        
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

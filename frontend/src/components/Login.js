@@ -33,7 +33,8 @@ const Login = () => {
         // Work with the JSON data here
         //if the login is successful send to landing page
         if(data.status === "success"){
-          console.log("success")
+          console.log("success");
+          localStorage.setItem('username', inputUser);
           navigate("/landing");
         }
         //tell user why the login failed
