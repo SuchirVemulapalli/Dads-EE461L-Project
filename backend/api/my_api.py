@@ -30,7 +30,7 @@ def create_user():
     elif password != confirm: #if the confirm password doesn't match
         return jsonify({"status": "failure"})
     else:
-        collection.insert_one({"user": username, "pass": password, "projects": ["Project 1"]}) #projects is the projects that the user has access to
+        collection.insert_one({"user": username, "pass": password, "projects": []}) #projects is the projects that the user has access to
         return jsonify({"status": "success"})
 
 
@@ -149,7 +149,9 @@ def createProject():
         doc = {
         "projectID" : projectID,
         "description" : description,
-        "users" : [username]
+        "users" : [username],
+        "HWSet1": 0,
+        "HWSet2": 1
         }
         projects.insert_one(doc)
 
