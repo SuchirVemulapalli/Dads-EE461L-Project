@@ -6,6 +6,10 @@ const LandingNavBar = () => {
   const location = useLocation(); // Get the current location from react-router-dom
   const [activeLink, setActiveLink] = useState("Projects");
 
+  const logout = () => {
+    localStorage.setItem('username', '');
+  }
+  
   useEffect(() => {
     // Determine the initial active link based on the current route
     if (location.pathname === "/create-project") {
@@ -50,6 +54,11 @@ const LandingNavBar = () => {
             onClick={() => handleLinkClick("Join Project")}
           >
             Join Project
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="nav-link" href="/" onClick={logout}>
+            Logout
           </a>
         </li>
       </ul>
