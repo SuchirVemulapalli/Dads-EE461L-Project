@@ -62,7 +62,7 @@ const CreateUser = () => {
         type="password"
         placeholder="Confirm Password"
         name="password"
-        id="password"
+        id="confirmpass"
         value = {inputConfirm}
         onChange = {(e) => setInputConfirm(e.target.value)}
       ></input>
