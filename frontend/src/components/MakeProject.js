@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 const MakeProject = ({prop}) => {
     const [projectID, setProjectID] = useState('')
-    const [HWSet1, setHWSet1] = useState('')
-    const [HWSet2, setHWSet2] = useState('')
+    const [description, setDescription] = useState('')
 
     const createProject = () => {
         axios
@@ -11,8 +10,7 @@ const MakeProject = ({prop}) => {
         "http://127.0.0.1:5000/create-project",
         {
           projectID: projectID,
-          HWSet1: HWSet1,
-          HWSet2: HWSet2,
+          description: description,
           user: localStorage.getItem('username')
         },
         {
@@ -47,16 +45,10 @@ const MakeProject = ({prop}) => {
       ></input>
       <br></br>
       <input
-        type="number"
-        placeholder="HWSet1 Qty"
-        onChange={(e) => setHWSet1(e.target.value)}
-      ></input>
-      <br></br>
-      <input
-        type="number"
-        placeholder="HWSet2 Qty"
-        onChange={(e) => setHWSet2(e.target.value)}
-      ></input>
+        type="text"
+        placeholder="Description"
+        onChange={(e) => setDescription(e.target.value)}
+      ></input>      
       <br></br>
       <button type="button" className="btn btn-primary" onClick={createProject}> 
         Create
