@@ -36,7 +36,7 @@ const Inventory = () => {
     }
   return (
     <div>
-        <h1>Inventory</h1>
+        <h1>Inventory (Available Quantity/Total Capacity)</h1>
         <h2>HWSet1: {quantity1}/{capacity1}</h2>
         <h2>HWSet2: {quantity2}/{capacity2}</h2>
 
