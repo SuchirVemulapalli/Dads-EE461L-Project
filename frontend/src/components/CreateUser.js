@@ -5,6 +5,7 @@ const CreateUser = () => {
   const [inputUser, setInputUser] = useState("");
   const [inputPass, setInputPass] = useState("");
   const [inputConfirm, setInputConfirm] = useState("");
+  const [status, setStatus] = useState('')
 
   const addUser = () => {
     axios
@@ -31,6 +32,7 @@ const CreateUser = () => {
       .then((data) => {
         // Work with the JSON data here
         console.log(data);
+        setStatus(data.status)
       })
       .catch((error) => {
         // Handle errors, e.g., network errors or API errors
@@ -66,6 +68,8 @@ const CreateUser = () => {
         value = {inputConfirm}
         onChange = {(e) => setInputConfirm(e.target.value)}
       ></input>
+      <br></br>
+      <h6>{status}</h6>
       <br></br>
       <button type="button" className="btn btn-primary" onClick= {addUser}> 
         Create

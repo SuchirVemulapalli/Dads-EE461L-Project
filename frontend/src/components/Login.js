@@ -7,7 +7,7 @@ const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
   const navigate = useNavigate(); // Initialize the navigate function using useNavigate
-  const [status, setStatus] = useState('hi');
+  const [status, setStatus] = useState('');
 
   const verify = () => {
     axios
