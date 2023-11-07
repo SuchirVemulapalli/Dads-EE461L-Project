@@ -284,18 +284,34 @@ def checkIn_hardware():
 @app.route("/checkOut", methods=["POST"])
 @cross_origin()
 def checkOut_hardware():
+    db = client['ProjectData']
+    collection = db['HardwareSets']
+
     userdata = request.get_json()
+    set = userdata.get("set")
+    input = userdata.get("input")
     projectid = userdata.get("projectid")
-    input = int(userdata.get("input"))
-    quantity = int(userdata.get("quantity"))
-    if (quantity - input) < 0 or input < 0 or not input:
-        return jsonify({"status": "failure"})
+
+    if set == "HWSet1":
+        doc = collection.find_one({"setID" : "HWSet1"})
     else:
+        doc = collection.find_one({"setID" : "HWSet2"})
+    quantity = doc.get("quantity")
+    if input > quantity:
+        return jsonify({"status": "Not enough quantity"})
+    elif input <= 0:
+        return jsonify({"status": "Enter a positive value"})
+    elif not input:
+        return jsonify({"status": "Please enter a value"})
+    else:
+        filter = {'setID' : set}
+        update = {'$set': {'quantity': quantity - input}}
+        result = collection.update_one(filter, update)
         return jsonify({
-            "status": "success",
-            "projectid" : projectid,
-            "output" : (quantity - input)
-        })
+                "status": "success",
+                "projectid": projectid,
+                "output" : (quantity-input)
+            })
 
 @app.route("/join", methods=["POST"])
 @cross_origin()
