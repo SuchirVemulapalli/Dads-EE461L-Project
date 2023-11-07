@@ -71,7 +71,8 @@ def getDocs():
     username = userdata.get("user")
     
     doc = users.find_one({"user": username})
-    
+    if not doc:
+        return jsonify({"status" : "none"})
     #get list of projects that the user has access to
     validProjects = doc.get("projects")
 
@@ -207,6 +208,33 @@ def joinProject():
     result = users.update_one(filter, update)
 
     return jsonify({"status" : "success"})
+
+@app.route("/get-sets", methods=["POST"])
+@cross_origin()
+def getSets():
+    #accessing databases
+    projectDB = client["ProjectData"] #accessing projectdb
+
+    #access collections 
+    hardware = projectDB["HardwareSets"]
+
+    doc1 = hardware.find_one({"setID": "HWSet1"})
+    doc2 = hardware.find_one({"setID": "HWSet2"})
+    
+    quantity1 = doc1.get("quantity")
+    capacity1 = doc1.get("capacity")
+
+    quantity2 = doc2.get("quantity")
+    capacity2 = doc2.get("capacity")
+
+    return jsonify({
+        "quantity1" : quantity1,
+        "quantity2" : quantity2,
+        "capacity1" : capacity1,
+        "capacity2" : capacity2
+    })
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
