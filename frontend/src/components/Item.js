@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../css/Item.css';
-
+import axios from 'axios'
 const Item = ({ itemName, prop }) => {
   const [buttonText, setButtonText] = useState({ color: "blue" });
   const [buttonValue, setButtonValue] = useState('join');
@@ -10,6 +10,10 @@ const Item = ({ itemName, prop }) => {
 
   const [input, setInput] = useState(null)
   
+  //for error msg
+  const [showText, setShowText] = useState(false)
+  const [status, setStatus] = useState("")
+
   const checkOut = () =>{
     if (!qty){
       let text = "error";
@@ -51,7 +55,7 @@ const Item = ({ itemName, prop }) => {
             let text = output + " hardware checked out";
             setShowText(true)
             setStatus(text)
-            setRemain(output)
+            setQty(output)
 
           }
         })
@@ -70,6 +74,11 @@ const Item = ({ itemName, prop }) => {
         <button className='itemElement'>Check In</button>
         <button className='itemElement' onClick={checkOut}>Check Out</button>
       </div>
+      {showText && (
+        <div>
+          <input readOnly type="text" value={status}/>
+        </div>
+        )}
     </div>
   );
 }
