@@ -285,7 +285,8 @@ def checkIn_hardware():
 @cross_origin()
 def checkOut_hardware():
     db = client['ProjectData']
-    collection = db['HardwareSets']
+    hardware = db['HardwareSets']
+    projects = db['Projects']
 
     userdata = request.get_json()
     set = userdata.get("set")
@@ -293,9 +294,9 @@ def checkOut_hardware():
     projectid = userdata.get("projectid")
 
     if set == "HWSet1":
-        doc = collection.find_one({"setID" : "HWSet1"})
+        doc = hardware.find_one({"setID" : "HWSet1"})
     else:
-        doc = collection.find_one({"setID" : "HWSet2"})
+        doc = hardware.find_one({"setID" : "HWSet2"})
     quantity = doc.get("quantity")
     if input > quantity:
         return jsonify({"status": "Not enough quantity"})
@@ -304,9 +305,18 @@ def checkOut_hardware():
     elif not input:
         return jsonify({"status": "Please enter a value"})
     else:
+        #updating set in HWSet DB
         filter = {'setID' : set}
         update = {'$set': {'quantity': quantity - input}}
-        result = collection.update_one(filter, update)
+        result = hardware.update_one(filter, update)
+
+        #updating project in project DB
+        filter = {"projectID": projectid}
+        doc = projects.find_one({"projectID": projectid})
+        prev = doc.get(set)
+        update = {'$set': {set: prev + input}}
+        result = projects.update_one(filter, update)
+
         return jsonify({
                 "status": "success",
                 "projectid": projectid,
