@@ -16,15 +16,24 @@ const Row = ({ props }) => {
       setButtonValue('Join');
     }
   }
-
+  //prop for HWSet1
+  let prop1 = {
+    projectID: projectid,
+    quantity: projectMap[projectid][0]
+  }
+  //prop for HWSet2
+  let prop2 = {
+    projectID: projectid,
+    quantity: projectMap[projectid][1]
+  }
   return (
     <div>
       <div className="row-container">
         <h2 className="rowElement">{props.projectid}</h2>
         <h4 className="rowElement">{formatted}</h4>
         <div className="rowElement">
-          <Item itemName="HWSet1" prop={projectMap[projectid][0]} />
-          <Item itemName="HWSet2" prop={projectMap[projectid][1]} />
+          <Item itemName="HWSet1" prop={prop1} />
+          <Item itemName="HWSet2" prop={prop2} />
         </div>
         <button className="rowElement" onClick={changeJoin} id="joinButton">{buttonValue}</button>
       </div>

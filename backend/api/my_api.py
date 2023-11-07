@@ -299,14 +299,14 @@ def checkOut_hardware():
 
 @app.route("/join", methods=["POST"])
 @cross_origin()
-def joinProject():
+def join():
     userdata =request.get_json()
     projectid = userdata.get("projectid")
     return jsonify({"id" : projectid})
 
 @app.route("/leave", methods=["POST"])
 @cross_origin()
-def leaveProject():
+def leave():
     userdata =request.get_json()
     projectid = userdata.get("projectid")
     return jsonify({"id" : projectid})
