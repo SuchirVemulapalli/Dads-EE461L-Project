@@ -12,7 +12,7 @@ const Item = ({ itemName, prop }) => {
     <div>
       <div className='itemRow'>
         <h3 className='itemElement'>{itemName}: {qty}/100</h3>
-        <input className='itemElement' placeholder="Enter qty" />
+        <input type= "number" className='itemElement' placeholder="Enter qty" />
         <button className='itemElement'>Check In</button>
         <button className='itemElement'>Check Out</button>
       </div>
