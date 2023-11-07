@@ -1,0 +1,14 @@
+
+.login{
+    /* moves login components from navbar */
+    margin: 2% 
+
+}
+
+.login input{
+    margin: 2%
+}
+
+.login button{
+    margin: 2%
+}
