@@ -263,5 +263,52 @@ def encrypt(inputText, N, D):
 def decrypt(reversedText, N, D):
    return encrypt(reversedText, N, (-1)*D)
 
+
+#from hw6
+@app.route("/checkIn", methods=["POST"])
+@cross_origin()
+def checkIn_hardware():
+    userdata = request.get_json()
+    projectid = userdata.get("projectid")
+    input = int(userdata.get("input"))
+    quantity = int(userdata.get("quantity"))
+    if (input + quantity) > 100 or input < 0 or not input:
+        return jsonify({"status": "failure"})
+    else:
+        return jsonify({
+            "status": "success",
+            "projectid" : projectid,
+            "output" : (input + quantity)
+        })
+
+@app.route("/checkOut", methods=["POST"])
+@cross_origin()
+def checkOut_hardware():
+    userdata = request.get_json()
+    projectid = userdata.get("projectid")
+    input = int(userdata.get("input"))
+    quantity = int(userdata.get("quantity"))
+    if (quantity - input) < 0 or input < 0 or not input:
+        return jsonify({"status": "failure"})
+    else:
+        return jsonify({
+            "status": "success",
+            "projectid" : projectid,
+            "output" : (quantity - input)
+        })
+
+@app.route("/join", methods=["POST"])
+@cross_origin()
+def joinProject():
+    userdata =request.get_json()
+    projectid = userdata.get("projectid")
+    return jsonify({"id" : projectid})
+
+@app.route("/leave", methods=["POST"])
+@cross_origin()
+def leaveProject():
+    userdata =request.get_json()
+    projectid = userdata.get("projectid")
+    return jsonify({"id" : projectid})
 if __name__ == "__main__":
     app.run(debug=True)
