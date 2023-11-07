@@ -7,7 +7,7 @@ const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
   const navigate = useNavigate(); // Initialize the navigate function using useNavigate
-
+  const [status, setStatus] = useState('hi');
 
   const verify = () => {
     axios
@@ -40,7 +40,7 @@ const Login = () => {
         }
         //tell user why the login failed
         else{
-          console.log("failure")
+          setStatus(data.status);
         }
       })
       .catch((error) => {
@@ -67,9 +67,11 @@ const Login = () => {
         id="password"
       ></input>
       <br></br>
+      <h6>{status}</h6>
+      <br></br>
       <button type="button" className="btn btn-primary" onClick={verify}>
         Login
-      </button>
+      </button>      
     </div>
   );
 };
