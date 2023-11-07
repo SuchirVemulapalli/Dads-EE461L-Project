@@ -48,9 +48,9 @@ def login():
             return jsonify({"status": "success"})
         
         else:
-            return jsonify({"status": "failure"})
+            return jsonify({"status": "password is incorrect"})
     else:
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "user does not exist"})
 
 
 @app.route("/get-docs", methods=["POST"])

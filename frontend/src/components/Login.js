@@ -35,6 +35,7 @@ const Login = () => {
         //if the login is successful send to landing page
         if(data.status === "success"){
           console.log("success");
+          setStatus(data.status)
           localStorage.setItem('username', inputUser);
           navigate("/landing");
         }
