@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
@@ -49,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="test">
       <input
         type="text"
         placeholder="Username"

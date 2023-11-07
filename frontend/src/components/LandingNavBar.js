@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom"; // Import useLocation from react-router-dom
-import "../App.css";
+import "../css/App.css";
 
 const LandingNavBar = () => {
   const location = useLocation(); // Get the current location from react-router-dom

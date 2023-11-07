@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Row from "./Row";
-import "./Project.css";
+import "../css/Project.css";
 import axios, { getAdapter } from 'axios'
 const DataTable = () => {
     const [projects, setProjects] = useState([]);

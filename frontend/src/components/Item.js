@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Item.css'
+import '../css/Item.css'
 const Item = ({prop}) => {
     const [itemName, setItemName] = useState('HWSet')
     const [buttonText, setButtonText] = useState({color: "blue"})
