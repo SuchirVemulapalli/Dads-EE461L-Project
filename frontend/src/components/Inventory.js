@@ -5,7 +5,7 @@ const Inventory = () => {
     const [capacity1, setCapacity1] = useState(100)
     const [quantity2, setQuantity2] = useState(0)
     const [capacity2, setCapacity2] = useState(100)
-    useEffect = () =>{
+    useEffect(() => {  
         axios
       .post(
         "http://127.0.0.1:5000/get-sets",
@@ -33,7 +33,7 @@ const Inventory = () => {
         // Handle errors, e.g., network errors or API errors
         console.error("There was a problem with the fetch operation:", error);
       });
-    }
+    }, []);
   return (
     <div>
         <h1>Inventory (Available Quantity/Total Capacity)</h1>
