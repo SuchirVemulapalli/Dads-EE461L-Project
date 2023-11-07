@@ -23,8 +23,8 @@ def create_user():
     print("server received")
     userdata = request.get_json()
     username = userdata.get("user")
-    password = userdata.get("pass")
-    confirm = userdata.get("confirm")
+    password = encrypt(userdata.get("pass"),5, -1)
+    confirm = encrypt(userdata.get("confirm"),5,-1)
     if collection.count_documents({"user": username}) > 0: #if the username alr exists in the db
         return jsonify({"status": "user already exists"})
     elif password != confirm: #if the confirm password doesn't match
@@ -39,7 +39,7 @@ def create_user():
 def login():
     userdata = request.json
     username = userdata.get("user")
-    password = userdata.get("pass")
+    password = encrypt(userdata.get("pass"),5,-1)
     doc = collection.find_one({"user": username})
     if doc:
         userPass = doc.get("pass")
@@ -152,7 +152,7 @@ def createProject():
         "description" : description,
         "users" : [username],
         "HWSet1": 0,
-        "HWSet2": 1
+        "HWSet2": 0
         }
         projects.insert_one(doc)
 
@@ -234,7 +234,34 @@ def getSets():
         "capacity2" : capacity2
     })
 
+# For simplicity, n=5, d=-1 always, Change later to randomize
+def encrypt(inputText, N, D):
 
+    if(N>92):
+        return encrypt(inputText, (N%93), D)
+
+    reversedInput = ""
+    for i in inputText:
+        reversedInput = i + reversedInput
+
+    encryptedInput = ""
+    for i in reversedInput:
+        if(D>0):
+            if(ord(i)+N>126):
+                encryptedInput = encryptedInput + chr((ord(i)+N)-126+33)
+            else:
+                encryptedInput = encryptedInput + chr(ord(i)+N)
+        else:
+            if(ord(i)-N<34):
+                encryptedInput = encryptedInput + chr(((ord(i) - N)) - 34 + 127)
+
+            else:
+                encryptedInput = encryptedInput + chr(ord(i)-N)
+    return encryptedInput
+
+
+def decrypt(reversedText, N, D):
+   return encrypt(reversedText, N, (-1)*D)
 
 if __name__ == "__main__":
     app.run(debug=True)
