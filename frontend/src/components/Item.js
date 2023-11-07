@@ -15,7 +15,7 @@ const Item = ({ itemName, prop }) => {
   const [status, setStatus] = useState("")
 
   const checkOut = () =>{
-    if (!qty){
+    if (!input){
       let text = "error";
       setShowText(true)
       setStatus(text)
@@ -44,20 +44,25 @@ const Item = ({ itemName, prop }) => {
           return response.data; // Axios automatically parses the response data as JSON
         })
         .then((data) => {
+          // "status": "success",
+          // "projectid": projectid,
+          // "output" : (quantity-input)
           console.log(data)
-          if (data.status === "failure"){
-            let text = "error";
-            setShowText(true)
-            setStatus(text)
-          }
-          else{
+          if (data.status === "success"){
             let projectid = data.projectid;
             let output = data.output;
-            let text = output + " hardware checked out";
+            let text = input + " hardware checked out";
+            setQty(output)
             setShowText(true)
             setStatus(text)
             setQty(output)
 
+          }
+          else{
+            let text = data.status;
+            setShowText(true)
+            setStatus(text)
+            
           }
         })
         .catch((error) => {

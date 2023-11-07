@@ -290,7 +290,7 @@ def checkOut_hardware():
 
     userdata = request.get_json()
     set = userdata.get("set")
-    input = userdata.get("input")
+    input = int(userdata.get("input"))
     projectid = userdata.get("projectid")
 
     if set == "HWSet1":
