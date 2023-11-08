@@ -311,18 +311,53 @@ def decrypt(reversedText, N, D):
 @app.route("/checkIn", methods=["POST"])
 @cross_origin()
 def checkIn_hardware():
+    db = client['ProjectData']
+    hardware = db['HardwareSets']
+    projects = db['Projects']
+
     userdata = request.get_json()
-    projectid = userdata.get("projectid")
+    set = userdata.get("set")
     input = int(userdata.get("input"))
-    quantity = int(userdata.get("quantity"))
-    if (input + quantity) > 100 or input < 0 or not input:
-        return jsonify({"status": "failure"})
+    projectid = userdata.get("projectid")
+
+    if set == "HWSet1":
+        doc = hardware.find_one({"setID" : "HWSet1"})
     else:
+        doc = hardware.find_one({"setID" : "HWSet2"})
+    capacity = doc.get("capacity")
+    quantity = doc.get("quantity")
+
+    filter = {"projectID": projectid}
+    doc = projects.find_one({"projectID": projectid})
+    prev = doc.get(set)
+    
+
+    if input+quantity > 100:
+        return jsonify({"status": "Checking in more than total capacity"})
+    elif input <= 0:
+        return jsonify({"status": "Enter a positive value"})
+    elif not input:
+        return jsonify({"status": "Please enter a value"})
+    elif prev-input < 0:
+        return jsonify({"status": "Checking in more than currently checked out"})
+    else:
+        #updating set in HWSet DB
+        filter = {'setID' : set}
+        update = {'$set': {'quantity': quantity + input}}
+        result = hardware.update_one(filter, update)
+
+        #updating project in project DB
+        filter = {"projectID": projectid}
+        doc = projects.find_one({"projectID": projectid})
+        prev = doc.get(set)
+        update = {'$set': {set: prev - input}}
+        result = projects.update_one(filter, update)
+
         return jsonify({
-            "status": "success",
-            "projectid" : projectid,
-            "output" : (input + quantity)
-        })
+                "status": "success",
+                "projectid": projectid,
+                "output" : (quantity+input)
+            })
 
 @app.route("/checkOut", methods=["POST"])
 @cross_origin()
