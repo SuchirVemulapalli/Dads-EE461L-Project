@@ -57,6 +57,15 @@ const LandingNavBar = () => {
           </a>
         </li>
         <li className="nav-item">
+          <a
+            className={`nav-link ${activeLink === "Leave Project" ? "active" : ""}`}
+            href="/leave-project"
+            onClick={() => handleLinkClick("Leave Project")}
+          >
+            Leave Project
+          </a>
+        </li>
+        <li className="nav-item">
           <a className="nav-link" href="/" onClick={logout}>
             Logout
           </a>

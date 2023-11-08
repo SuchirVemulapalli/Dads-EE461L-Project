@@ -209,6 +209,49 @@ def joinProject():
 
     return jsonify({"status" : "success"})
 
+@app.route("/leave-project", methods=["POST"])
+@cross_origin()
+def leaveProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    username = userdata.get("user")
+    projectID = userdata.get("projectID")
+
+    #removing the user to the project user list
+    doc = projects.find_one({"projectID": projectID})
+    if not doc:  #if the project doesn't exist
+        return jsonify({"status" : "project does not exist"})
+    arr = doc.get("users")
+    seen = set(arr)
+    if username not in seen: #the user is not in the project
+        return jsonify({"status" : "user not in project"})
+    arr.remove(username)
+    filter = {'projectID' : projectID}
+    update = {'$set': {'users': arr}}
+    result = projects.update_one(filter, update)
+
+    #removing the project to the user's project list
+    doc = users.find_one({"user": username})
+    arr = doc.get("projects")
+    seen = set(arr)
+    if projectID not in seen: #the user is not in the project
+        return jsonify({"status" : "user not in project"})
+    arr.remove(projectID)
+    filter = {"user": username}
+    update = {'$set': {'projects': arr}}
+    result = users.update_one(filter, update)
+
+    return jsonify({"status" : "success"})
+
 @app.route("/get-sets", methods=["POST"])
 @cross_origin()
 def getSets():
@@ -323,18 +366,5 @@ def checkOut_hardware():
                 "output" : (quantity-input)
             })
 
-@app.route("/join", methods=["POST"])
-@cross_origin()
-def join():
-    userdata =request.get_json()
-    projectid = userdata.get("projectid")
-    return jsonify({"id" : projectid})
-
-@app.route("/leave", methods=["POST"])
-@cross_origin()
-def leave():
-    userdata =request.get_json()
-    projectid = userdata.get("projectid")
-    return jsonify({"id" : projectid})
 if __name__ == "__main__":
     app.run(debug=True)

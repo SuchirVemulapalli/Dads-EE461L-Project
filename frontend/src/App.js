@@ -5,6 +5,7 @@ import LoginScreen from "./pages/LoginScreen.js";
 import Landing from "./pages/Landing.js";
 import CreateProject from "./pages/CreateProject.js";
 import JoinProject from "./pages/JoinProject.js";
+import LeaveProject from "./pages/LeaveProject.js";
 const App = () => {
   
   //add new pages here
@@ -28,6 +29,10 @@ const App = () => {
     {
       path: "join-project",
       element: <JoinProject />,
+    },
+    {
+      path: "leave-project",
+      element: <LeaveProject />,
     },
   ])
   return (
