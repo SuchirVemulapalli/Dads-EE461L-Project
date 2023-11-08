@@ -23,14 +23,14 @@ def create_user():
     print("server received")
     userdata = request.get_json()
     username = userdata.get("user")
-    password = userdata.get("pass")
-    confirm = userdata.get("confirm")
+    password = encrypt(userdata.get("pass"),5, -1)
+    confirm = encrypt(userdata.get("confirm"),5,-1)
     if collection.count_documents({"user": username}) > 0: #if the username alr exists in the db
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "user already exists"})
     elif password != confirm: #if the confirm password doesn't match
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "passwords do not match"})
     else:
-        collection.insert_one({"user": username, "pass": password, "projects": ["Project 1"]}) #projects is the projects that the user has access to
+        collection.insert_one({"user": username, "pass": password, "projects": []}) #projects is the projects that the user has access to
         return jsonify({"status": "success"})
 
 
@@ -39,7 +39,7 @@ def create_user():
 def login():
     userdata = request.json
     username = userdata.get("user")
-    password = userdata.get("pass")
+    password = encrypt(userdata.get("pass"),5,-1)
     doc = collection.find_one({"user": username})
     if doc:
         userPass = doc.get("pass")
@@ -48,9 +48,9 @@ def login():
             return jsonify({"status": "success"})
         
         else:
-            return jsonify({"status": "failure"})
+            return jsonify({"status": "password is incorrect"})
     else:
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "user does not exist"})
 
 
 @app.route("/get-docs", methods=["POST"])
@@ -71,7 +71,8 @@ def getDocs():
     username = userdata.get("user")
     
     doc = users.find_one({"user": username})
-    
+    if not doc:
+        return jsonify({"status" : "none"})
     #get list of projects that the user has access to
     validProjects = doc.get("projects")
 
@@ -137,40 +138,24 @@ def createProject():
     #info from front end
     userdata = request.get_json()
     projectID = userdata.get("projectID")
-    HWSet1 = userdata.get("HWSet1")
-    HWSet2 = userdata.get("HWSet2")
+    description = userdata.get("description")
     username = userdata.get("user")
 
-    #hardwareset info
-    doc1 = hardwareSets.find_one({"setID" : "HWSet1"})
-    doc2 = hardwareSets.find_one({"setID" : "HWSet2"})
-    remain1 = doc1.get("quantity")
-    remain2 = doc2.get("quantity")
-    print(remain1)
-    print(remain2)
-    print(HWSet1)
+    
+    
     if projects.count_documents({"projectID" : projectID}) > 0: #the projectid alr exists
-        return jsonify({"status": "failure"})
-    elif int(HWSet1) > int(remain1) or int(HWSet2) > int(remain2): #there arent enough materials
         return jsonify({"status": "failure"})
     else:
         #add the new document to the project collection
         doc = {
         "projectID" : projectID,
-        "HWSet1" : HWSet1,
-        "HWSet2" : HWSet2,
-        "users" : [username]
+        "description" : description,
+        "users" : [username],
+        "HWSet1": 0,
+        "HWSet2": 0
         }
         projects.insert_one(doc)
 
-        #make updates to the quantity values in the HWSets
-        filter = {'setID': "HWSet1"}
-        update = {'$set': {'quantity': int(remain1) - int(HWSet1)}}
-        result = hardwareSets.update_one(filter, update)
-
-        filter = {'setID': "HWSet2"}
-        update = {'$set': {'quantity': int(remain2) - int(HWSet2)}}
-        result = hardwareSets.update_one(filter, update)
         #add the project to the user's project list in user collection
 
         filter = {'user' : username}
@@ -223,6 +208,198 @@ def joinProject():
     result = users.update_one(filter, update)
 
     return jsonify({"status" : "success"})
+
+@app.route("/leave-project", methods=["POST"])
+@cross_origin()
+def leaveProject():
+    # getting db information
+    print("server received")
+    projectDB = client['ProjectData']
+    userDB = client['UserInfo']
+
+    #getting collection information
+    projects = projectDB['Projects']
+    users = userDB['Users']
+
+    #info from front end
+    userdata = request.get_json()
+    username = userdata.get("user")
+    projectID = userdata.get("projectID")
+
+    #removing the user to the project user list
+    doc = projects.find_one({"projectID": projectID})
+    if not doc:  #if the project doesn't exist
+        return jsonify({"status" : "project does not exist"})
+    arr = doc.get("users")
+    seen = set(arr)
+    if username not in seen: #the user is not in the project
+        return jsonify({"status" : "user not in project"})
+    arr.remove(username)
+    filter = {'projectID' : projectID}
+    update = {'$set': {'users': arr}}
+    result = projects.update_one(filter, update)
+
+    #removing the project to the user's project list
+    doc = users.find_one({"user": username})
+    arr = doc.get("projects")
+    seen = set(arr)
+    if projectID not in seen: #the user is not in the project
+        return jsonify({"status" : "user not in project"})
+    arr.remove(projectID)
+    filter = {"user": username}
+    update = {'$set': {'projects': arr}}
+    result = users.update_one(filter, update)
+
+    return jsonify({"status" : "success"})
+
+@app.route("/get-sets", methods=["POST"])
+@cross_origin()
+def getSets():
+    #accessing databases
+    projectDB = client["ProjectData"] #accessing projectdb
+
+    #access collections 
+    hardware = projectDB["HardwareSets"]
+
+    doc1 = hardware.find_one({"setID": "HWSet1"})
+    doc2 = hardware.find_one({"setID": "HWSet2"})
+    
+    quantity1 = doc1.get("quantity")
+    capacity1 = doc1.get("capacity")
+
+    quantity2 = doc2.get("quantity")
+    capacity2 = doc2.get("capacity")
+
+    return jsonify({
+        "quantity1" : quantity1,
+        "quantity2" : quantity2,
+        "capacity1" : capacity1,
+        "capacity2" : capacity2
+    })
+
+# For simplicity, n=5, d=-1 always, Change later to randomize
+def encrypt(inputText, N, D):
+
+    if(N>92):
+        return encrypt(inputText, (N%93), D)
+
+    reversedInput = ""
+    for i in inputText:
+        reversedInput = i + reversedInput
+
+    encryptedInput = ""
+    for i in reversedInput:
+        if(D>0):
+            if(ord(i)+N>126):
+                encryptedInput = encryptedInput + chr((ord(i)+N)-126+33)
+            else:
+                encryptedInput = encryptedInput + chr(ord(i)+N)
+        else:
+            if(ord(i)-N<34):
+                encryptedInput = encryptedInput + chr(((ord(i) - N)) - 34 + 127)
+
+            else:
+                encryptedInput = encryptedInput + chr(ord(i)-N)
+    return encryptedInput
+
+
+def decrypt(reversedText, N, D):
+   return encrypt(reversedText, N, (-1)*D)
+
+
+#from hw6
+@app.route("/checkIn", methods=["POST"])
+@cross_origin()
+def checkIn_hardware():
+    db = client['ProjectData']
+    hardware = db['HardwareSets']
+    projects = db['Projects']
+
+    userdata = request.get_json()
+    set = userdata.get("set")
+    input = int(userdata.get("input"))
+    projectid = userdata.get("projectid")
+
+    if set == "HWSet1":
+        doc = hardware.find_one({"setID" : "HWSet1"})
+    else:
+        doc = hardware.find_one({"setID" : "HWSet2"})
+    capacity = doc.get("capacity")
+    quantity = doc.get("quantity")
+
+    filter = {"projectID": projectid}
+    doc = projects.find_one({"projectID": projectid})
+    prev = doc.get(set)
+    
+
+    if input+quantity > 100:
+        return jsonify({"status": "Checking in more than total capacity"})
+    elif input <= 0:
+        return jsonify({"status": "Enter a positive value"})
+    elif not input:
+        return jsonify({"status": "Please enter a value"})
+    elif prev-input < 0:
+        return jsonify({"status": "Checking in more than currently checked out"})
+    else:
+        #updating set in HWSet DB
+        filter = {'setID' : set}
+        update = {'$set': {'quantity': quantity + input}}
+        result = hardware.update_one(filter, update)
+
+        #updating project in project DB
+        filter = {"projectID": projectid}
+        doc = projects.find_one({"projectID": projectid})
+        prev = doc.get(set)
+        update = {'$set': {set: prev - input}}
+        result = projects.update_one(filter, update)
+
+        return jsonify({
+                "status": "success",
+                "projectid": projectid,
+                "output" : (quantity+input)
+            })
+
+@app.route("/checkOut", methods=["POST"])
+@cross_origin()
+def checkOut_hardware():
+    db = client['ProjectData']
+    hardware = db['HardwareSets']
+    projects = db['Projects']
+
+    userdata = request.get_json()
+    set = userdata.get("set")
+    input = int(userdata.get("input"))
+    projectid = userdata.get("projectid")
+
+    if set == "HWSet1":
+        doc = hardware.find_one({"setID" : "HWSet1"})
+    else:
+        doc = hardware.find_one({"setID" : "HWSet2"})
+    quantity = doc.get("quantity")
+    if input > quantity:
+        return jsonify({"status": "Not enough quantity"})
+    elif input <= 0:
+        return jsonify({"status": "Enter a positive value"})
+    elif not input:
+        return jsonify({"status": "Please enter a value"})
+    else:
+        #updating set in HWSet DB
+        filter = {'setID' : set}
+        update = {'$set': {'quantity': quantity - input}}
+        result = hardware.update_one(filter, update)
+
+        #updating project in project DB
+        filter = {"projectID": projectid}
+        doc = projects.find_one({"projectID": projectid})
+        prev = doc.get(set)
+        update = {'$set': {set: prev + input}}
+        result = projects.update_one(filter, update)
+
+        return jsonify({
+                "status": "success",
+                "projectid": projectid,
+                "output" : (quantity-input)
+            })
 
 if __name__ == "__main__":
     app.run(debug=True)

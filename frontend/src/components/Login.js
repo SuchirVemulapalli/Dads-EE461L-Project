@@ -5,13 +5,14 @@ import './Login.css';
 import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
+import "../css/LoginScreen.css";
 
 
 const Login = () => {
   const [inputPass, setInputPass] = useState("");
   const [inputUser, setInputUser] = useState("");
   const navigate = useNavigate(); // Initialize the navigate function using useNavigate
-
+  const [status, setStatus] = useState('');
 
   const verify = () => {
     axios
@@ -39,12 +40,13 @@ const Login = () => {
         //if the login is successful send to landing page
         if(data.status === "success"){
           console.log("success");
+          setStatus(data.status)
           localStorage.setItem('username', inputUser);
           navigate("/landing");
         }
         //tell user why the login failed
         else{
-          console.log("failure")
+          setStatus(data.status);
         }
       })
       .catch((error) => {
@@ -71,9 +73,11 @@ const Login = () => {
         id="password"
       ></input>
       <br></br>
-      <Button variant="contained" onClick={verify}>
+      <h6>{status}</h6>
+      <br></br>
+      <button type="button" className="btn btn-primary" onClick={verify}>
         Login
-      </Button>
+      </button>      
     </div>
   );
 };

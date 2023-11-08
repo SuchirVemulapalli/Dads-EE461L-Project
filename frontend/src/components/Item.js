@@ -1,20 +1,151 @@
-import React, { useState } from 'react'
-import './Item.css'
-const Item = ({prop}) => {
-    const [itemName, setItemName] = useState('HWSet')
-    const [buttonText, setButtonText] = useState({color: "blue"})
-    const [buttonValue, setButtonValue] = useState('join')
+import React, { useState } from 'react';
+import '../css/Item.css';
+import axios from 'axios'
+const Item = ({ itemName, prop }) => {
+  const [buttonText, setButtonText] = useState({ color: "blue" });
+  const [buttonValue, setButtonValue] = useState('join');
 
+  const [qty, setQty] = useState(prop.quantity)
+  const [projectID, setProjectID] = useState(prop.projectID)
+
+  const [input, setInput] = useState(null)
+  
+  //for error msg
+  const [showText, setShowText] = useState(false)
+  const [status, setStatus] = useState("")
+
+  const checkOut = () =>{
+    if (!input){
+      let text = "error";
+      setShowText(true)
+      setStatus(text)
+    }
+    else{
+      axios
+        .post(
+          "http://127.0.0.1:5000/checkOut",
+          {
+            projectid: projectID,
+            set: itemName,
+            input: input,
+            quantity: qty,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          // Check if the response status is OK (status code 200)
+          if (response.status !== 200) {
+            throw new Error("Network response was not ok");
+          }
+          return response.data; // Axios automatically parses the response data as JSON
+        })
+        .then((data) => {
+          // "status": "success",
+          // "projectid": projectid,
+          // "output" : (quantity-input)
+          console.log(data)
+          if (data.status === "success"){
+            let projectid = data.projectid;
+            let output = data.output;
+            let text = input + " hardware checked out";
+            setQty(output)
+            setShowText(true)
+            setStatus(text)
+            setQty(output)
+
+          }
+          else{
+            let text = data.status;
+            setShowText(true)
+            setStatus(text)
+            
+          }
+        })
+        .catch((error) => {
+          // Handle errors, e.g., network errors or API errors
+          console.error("There was a problem with the fetch operation:", error);
+        });
+      }
+  }
+
+
+  const checkIn = () =>{
+    if (!input){
+      let text = "error";
+      setShowText(true)
+      setStatus(text)
+    }
+    else{
+      axios
+        .post(
+          "http://127.0.0.1:5000/checkIn",
+          {
+            projectid: projectID,
+            set: itemName,
+            input: input,
+            quantity: qty,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          // Check if the response status is OK (status code 200)
+          if (response.status !== 200) {
+            throw new Error("Network response was not ok");
+          }
+          return response.data; // Axios automatically parses the response data as JSON
+        })
+        .then((data) => {
+          // "status": "success",
+          // "projectid": projectid,
+          // "output" : (quantity-input)
+          console.log(data)
+          if (data.status === "success"){
+            let projectid = data.projectid;
+            let output = data.output;
+            let text = input + " hardware checked in";
+            setQty(output)
+            setShowText(true)
+            setStatus(text)
+            setQty(output)
+
+          }
+          else{
+            let text = data.status;
+            setShowText(true)
+            setStatus(text)
+            
+          }
+        })
+        .catch((error) => {
+          // Handle errors, e.g., network errors or API errors
+          console.error("There was a problem with the fetch operation:", error);
+        });
+      }
+  }
+  
   return (
     <div>
       <div className='itemRow'>
-        <h3 className='itemElement'>{itemName}: {prop}/100</h3>
-        <input className ='itemElement' placeholder="Enter qty"></input>
-        <button className='itemElement'>Check In</button>
-        <button className='itemElement'>Check Out</button>
+        <h3 className='itemElement'>{itemName}: {qty}/100</h3>
+        <input type= "number" className='itemElement' placeholder="Enter qty" onChange={(e) => setInput(e.target.value)}/>
+        <button className='itemElement'onClick={checkIn}>Check In</button>
+        <button className='itemElement' onClick={checkOut}>Check Out</button>
       </div>
+      {showText && (
+        <div>
+          <input readOnly type="text" value={status}/>
+        </div>
+        )}
     </div>
-  )
+  );
 }
 
-export default Item
+export default Item;

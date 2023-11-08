@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import axios from 'axios'
-const MakeProject = ({prop}) => {
+const Leave = () => {
     const [projectID, setProjectID] = useState('')
-    const [description, setDescription] = useState('')
-
-    const createProject = () => {
+    const joinProject = () =>{
         axios
       .post(
-        "http://127.0.0.1:5000/create-project",
+        "http://127.0.0.1:5000/leave-project",
         {
           projectID: projectID,
-          description: description,
           user: localStorage.getItem('username')
         },
         {
@@ -35,26 +32,19 @@ const MakeProject = ({prop}) => {
         console.error("There was a problem with the fetch operation:", error);
       });
     }
+    return (
+        <div>
+            <input
+                type="text"
+                placeholder="Project ID"
+                onChange={(e) => setProjectID(e.target.value)}
+            ></input>
+            <br></br>
+            <button type="button" className="btn btn-primary" onClick={joinProject}>
+                Leave
+            </button>
+        </div>
+    );
+};
 
-  return (
-    <div>
-        <input
-        type="text"
-        placeholder="Project ID"
-        onChange={(e) => setProjectID(e.target.value)}
-      ></input>
-      <br></br>
-      <input
-        type="text"
-        placeholder="Description"
-        onChange={(e) => setDescription(e.target.value)}
-      ></input>      
-      <br></br>
-      <button type="button" className="btn btn-primary" onClick={createProject}> 
-        Create
-      </button>
-    </div>
-  )
-}
-
-export default MakeProject
+export default Leave;
