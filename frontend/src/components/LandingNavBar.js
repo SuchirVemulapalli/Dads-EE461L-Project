@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // Import useLocation from react-router-dom
+import { useLocation, Link } from "react-router-dom";
 import "../css/App.css";
 
 const LandingNavBar = () => {
-  const location = useLocation(); // Get the current location from react-router-dom
+  const location = useLocation();
   const [activeLink, setActiveLink] = useState("Projects");
 
   const logout = () => {
@@ -11,17 +11,19 @@ const LandingNavBar = () => {
   }
   
   useEffect(() => {
-    // Determine the initial active link based on the current route
     if (location.pathname === "/create-project") {
       setActiveLink("Create Project");
     } else if (location.pathname === "/join-project") {
       setActiveLink("Join Project");
+    } else if (location.pathname === "/leave-project") {
+      setActiveLink("Leave Project");
+    } else {
+      setActiveLink("Projects"); // Default to "Projects" for other routes
     }
   }, [location]);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
-    // Store the active link in local storage
     localStorage.setItem("landingActiveLink", link);
   };
 
@@ -29,46 +31,45 @@ const LandingNavBar = () => {
     <div>
       <ul className="nav nav-underline">
         <li className="nav-item">
-          <a
+          <Link
             className={`nav-link ${activeLink === "Projects" ? "active" : ""}`}
-            aria-current="page"
-            href="/landing"
+            to="/landing"
             onClick={() => handleLinkClick("Projects")}
           >
             Projects
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a
+          <Link
             className={`nav-link ${activeLink === "Create Project" ? "active" : ""}`}
-            href="/create-project"
+            to="/create-project"
             onClick={() => handleLinkClick("Create Project")}
           >
             Create Project
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a
+          <Link
             className={`nav-link ${activeLink === "Join Project" ? "active" : ""}`}
-            href="/join-project"
+            to="/join-project"
             onClick={() => handleLinkClick("Join Project")}
           >
             Join Project
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a
+          <Link
             className={`nav-link ${activeLink === "Leave Project" ? "active" : ""}`}
-            href="/leave-project"
+            to="/leave-project"
             onClick={() => handleLinkClick("Leave Project")}
           >
             Leave Project
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a className="nav-link" href="/" onClick={logout}>
+          <Link className="nav-link" to="/" onClick={logout}>
             Logout
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

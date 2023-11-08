@@ -35,7 +35,6 @@ const Row = ({ props }) => {
           <Item itemName="HWSet1" prop={prop1} />
           <Item itemName="HWSet2" prop={prop2} />
         </div>
-        <button className="rowElement" onClick={changeJoin} id="joinButton">{buttonValue}</button>
       </div>
     </div>
   );
