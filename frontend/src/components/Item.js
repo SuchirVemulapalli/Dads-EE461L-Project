@@ -14,6 +14,11 @@ const Item = ({ itemName, prop }) => {
   //for error msg
   const [status, setStatus] = useState("")
 
+
+  const rerender = () =>{
+    prop.refreshStats()
+  }
+
   const checkOut = () =>{
     if (!input){
       let text = "error";
@@ -54,12 +59,12 @@ const Item = ({ itemName, prop }) => {
             setQty(output)
             setStatus(text)
             setQty(output)
-
+            rerender()
           }
           else{
             let text = data.status;
             setStatus(text)
-            
+            rerender()
           }
         })
         .catch((error) => {
@@ -112,12 +117,12 @@ const Item = ({ itemName, prop }) => {
 
             setStatus(text)
             setQty(output)
-
+            rerender()
           }
           else{
             let text = data.status;
             setStatus(text)
-            
+            rerender()
           }
         })
         .catch((error) => {

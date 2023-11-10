@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import Row from "./Row";
 import "../css/Project.css";
 import axios, { getAdapter } from 'axios'
+import { useAppContext } from './AppContext';
+
 const DataTable = () => {
     const [projects, setProjects] = useState([]);
     const [hardwareMap, setHardwareMap] = useState({})
     const [projectMap, setProjectMap] = useState({})
     const [userMap, setUserMap] = useState({})
+    const { handleClick } = useAppContext();
 
     //boolean to show project rows or not
     const [showRows, setShowRows] = useState(false)
@@ -106,7 +109,8 @@ const DataTable = () => {
                 projectid: id,
                 projectMap: projectMap,
                 userMap: userMap,
-                onButtonClick:leaveProject
+                onButtonClick:leaveProject,
+                onButtonClick2: handleClick
               }}
             />
             ))}
