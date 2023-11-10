@@ -14,6 +14,10 @@ const DataTable = () => {
     //boolean to show project rows or not
     const [showRows, setShowRows] = useState(false)
 
+    const rerender = () =>{
+      handleClick()
+    }
+
     const getData = () =>{
       axios
       .post(
@@ -59,6 +63,7 @@ const DataTable = () => {
     }
     useEffect(() => {
         getData()
+        rerender()
     }, []);
     
     const leaveProject = (projectid) =>{
