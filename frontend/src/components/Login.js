@@ -58,6 +58,7 @@ const Login = () => {
   return (
     <div className="login">
       <input
+          style={{marginTop:'-100px', height: '50px', width:'200px'}}
         type="text"
         placeholder="Username"
         value={inputUser}
@@ -66,6 +67,7 @@ const Login = () => {
       ></input>
       <br></br>
       <input
+          style={{marginBottom:'-50px', height: '50px', width:'200px'}}
         type="password"
         placeholder="Password"
         value={inputPass}
@@ -75,7 +77,7 @@ const Login = () => {
       <br></br>
       <h6>{status}</h6>
       <br></br>
-      <button type="button" className="btn btn-primary" onClick={verify}>
+      <button type="button" className="btn btn-primary" style={{width:'200px', height: '50px'}} onClick={verify}>
         Login
       </button>      
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../css/LoginScreen.css"
 
 const CreateUser = () => {
   const [inputUser, setInputUser] = useState("");
@@ -41,8 +42,9 @@ const CreateUser = () => {
   };
 
   return (
-    <div>
+    <div className="CreateUser">
       <input
+          style={{marginTop:'-100px',marginBottom:'25px', height: '50px', width:'200px'}}
         type="text"
         placeholder="Username"
         name="username"
@@ -52,6 +54,7 @@ const CreateUser = () => {
       ></input>
       <br></br>
       <input
+          style={{marginTop:'-50px', marginBottom: '20px', height: '50px', width:'200px'}}
         type="password"
         placeholder="Password"
         name="password"
@@ -61,6 +64,7 @@ const CreateUser = () => {
       ></input>
       <br></br>
       <input
+          style={{marginTop:'-10px', height: '50px', width:'200px'}}
         type="password"
         placeholder="Confirm Password"
         name="password"
@@ -71,7 +75,7 @@ const CreateUser = () => {
       <br></br>
       <h6>{status}</h6>
       <br></br>
-      <button type="button" className="btn btn-primary" onClick= {addUser}> 
+      <button type="button" className="btn btn-primary" style={{width:'200px', height: '50px'}} onClick= {addUser}>
         Create
       </button>
     </div>
