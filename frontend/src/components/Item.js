@@ -12,13 +12,11 @@ const Item = ({ itemName, prop }) => {
   const [input, setInput] = useState(null)
   
   //for error msg
-  const [showText, setShowText] = useState(false)
   const [status, setStatus] = useState("")
 
   const checkOut = () =>{
     if (!input){
       let text = "error";
-      setShowText(true)
       setStatus(text)
     }
     else{
@@ -54,14 +52,12 @@ const Item = ({ itemName, prop }) => {
             let output = data.output;
             let text = input + " hardware checked out";
             setQty(output)
-            setShowText(true)
             setStatus(text)
             setQty(output)
 
           }
           else{
             let text = data.status;
-            setShowText(true)
             setStatus(text)
             
           }
@@ -77,7 +73,6 @@ const Item = ({ itemName, prop }) => {
   const checkIn = () =>{
     if (!input){
       let text = "error";
-      setShowText(true)
       setStatus(text)
     }
     else{
@@ -112,15 +107,15 @@ const Item = ({ itemName, prop }) => {
             let projectid = data.projectid;
             let output = data.output;
             let text = input + " hardware checked in";
-            //setQty(output)
-            setShowText(true)
+            
+            setQty(output)
+
             setStatus(text)
             setQty(output)
 
           }
           else{
             let text = data.status;
-            setShowText(true)
             setStatus(text)
             
           }
@@ -140,11 +135,9 @@ const Item = ({ itemName, prop }) => {
         <Button variant='outlined' className='itemButton' style={{margin: '15px 12.5px'}} onClick={checkIn}>Check In</Button>
         <Button variant='outlined' className='itemButton' style={{margin: '15px 0px 15px 12.5px'}} onClick={checkOut}>Check Out</Button>
       </div>
-      {showText && (
-        <div className='itemError'>
-           {status}
-        </div>
-        )}
+
+        <h6>{status}</h6>
+
     </div>
   );
 }

@@ -52,7 +52,7 @@ const IndexNavBar = () => {
             Create User
           </a>
         </li>
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <a
             className={`nav-link ${activeLink === "Tutorial" ? "active" : ""}`}
             href="/tutorial"
@@ -61,7 +61,7 @@ const IndexNavBar = () => {
           >
             Tutorial
           </a>
-        </li>
+        </li> */}
       </ul>
     </div>
   );

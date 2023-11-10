@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from 'axios'
 const Leave = () => {
     const [projectID, setProjectID] = useState('')
-    const leaveProject = () =>{
+    const [status, setStatus] = useState('')
+    const joinProject = () =>{
         axios
       .post(
         "http://127.0.0.1:5000/leave-project",
@@ -25,6 +26,7 @@ const Leave = () => {
       })
       .then((data) => {
         // Work with the JSON data here
+        setStatus(data.status)
         console.log(data);
       })
       .catch((error) => {
@@ -39,6 +41,7 @@ const Leave = () => {
                 placeholder="Project ID"
                 onChange={(e) => setProjectID(e.target.value)}
             ></input>
+            <h6>{status}</h6>
             <br></br>
             <button type="button" className="btn btn-primary" onClick={leaveProject}>
                 Leave
