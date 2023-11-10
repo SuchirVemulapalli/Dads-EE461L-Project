@@ -1,6 +1,7 @@
 .window{
     max-height: 1500px;
-    max-width: 1500px;
+    max-width: 98%;
     border-style: solid;
     border-width: 3px;
+    margin-left: 1%;
 }
