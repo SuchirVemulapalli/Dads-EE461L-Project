@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from 'axios'
 const Leave = () => {
     const [projectID, setProjectID] = useState('')
-    const joinProject = () =>{
+    const leaveProject = () =>{
         axios
       .post(
         "http://127.0.0.1:5000/leave-project",
@@ -40,7 +40,7 @@ const Leave = () => {
                 onChange={(e) => setProjectID(e.target.value)}
             ></input>
             <br></br>
-            <button type="button" className="btn btn-primary" onClick={joinProject}>
+            <button type="button" className="btn btn-primary" onClick={leaveProject}>
                 Leave
             </button>
         </div>

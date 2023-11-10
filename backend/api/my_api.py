@@ -236,8 +236,18 @@ def leaveProject():
         return jsonify({"status" : "user not in project"})
     arr.remove(username)
     filter = {'projectID' : projectID}
-    update = {'$set': {'users': arr}}
-    result = projects.update_one(filter, update)
+    if (len(arr) == 0):
+        result = projects.delete_one(filter)
+        
+        #Prints to console if Project was successfully deleted when no user owns project
+        if result.deleted_count == 1:
+            print("Document deleted successfully.")
+        else:
+            print("Document not found or not deleted.")
+    else:
+        update = {'$set': {'users': arr}}
+        projects.update_one(filter, update)
+    
 
     #removing the project to the user's project list
     doc = users.find_one({"user": username})
@@ -350,13 +360,14 @@ def checkIn_hardware():
         filter = {"projectID": projectid}
         doc = projects.find_one({"projectID": projectid})
         prev = doc.get(set)
-        update = {'$set': {set: prev - input}}
+        new = prev - input
+        update = {'$set': {set: new}}
         result = projects.update_one(filter, update)
 
         return jsonify({
                 "status": "success",
                 "projectid": projectid,
-                "output" : (quantity+input)
+                "output" : (new)
             })
 
 @app.route("/checkOut", methods=["POST"])
@@ -392,13 +403,14 @@ def checkOut_hardware():
         filter = {"projectID": projectid}
         doc = projects.find_one({"projectID": projectid})
         prev = doc.get(set)
-        update = {'$set': {set: prev + input}}
+        new = prev + input
+        update = {'$set': {set: new}}
         result = projects.update_one(filter, update)
 
         return jsonify({
                 "status": "success",
                 "projectid": projectid,
-                "output" : (quantity-input)
+                "output" : (new)
             })
 
 if __name__ == "__main__":

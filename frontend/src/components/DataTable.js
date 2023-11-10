@@ -58,13 +58,45 @@ const DataTable = () => {
         getData()
     }, []);
     
+    const leaveProject = (projectid) =>{
+      axios
+    .post(
+      "http://127.0.0.1:5000/leave-project",
+      {
+        projectID: projectid,
+        user: localStorage.getItem('username')
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      // Check if the response status is OK (status code 200)
+      if (response.status !== 200) {
+        throw new Error("Network response was not ok");
+      }
+      return response.data; // Axios automatically parses the response data as JSON
+    })
+    .then((data) => {
+      // Work with the JSON data here
+      getData()
+      console.log(data);
+    })
+    .catch((error) => {
+      // Handle errors, e.g., network errors or API errors
+      console.error("There was a problem with the fetch operation:", error);
+    });
+    }
+
     const props = {
         name: "Project"
     };
   return (
     <div>
       <div className="window">
-        <h1>Projects</h1>
+        <h1 style={{margin: '10px 10px'}}>Projects</h1>
         {showRows && (
           <ul>
             {projects.map((id, index) => (
@@ -74,6 +106,7 @@ const DataTable = () => {
                 projectid: id,
                 projectMap: projectMap,
                 userMap: userMap,
+                onButtonClick:leaveProject
               }}
             />
             ))}

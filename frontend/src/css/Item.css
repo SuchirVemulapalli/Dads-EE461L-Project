@@ -6,3 +6,12 @@
 .itemElement{
     margin :10px
 }
+
+.itemButton{
+    width: 120px;
+    height: 40px;
+}
+
+.itemError{
+    color:lightcoral
+}

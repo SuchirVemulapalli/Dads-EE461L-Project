@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../css/Item.css';
+import { Button } from '@mui/material';
 import axios from 'axios'
 const Item = ({ itemName, prop }) => {
   const [buttonText, setButtonText] = useState({ color: "blue" });
@@ -111,7 +112,7 @@ const Item = ({ itemName, prop }) => {
             let projectid = data.projectid;
             let output = data.output;
             let text = input + " hardware checked in";
-            setQty(output)
+            //setQty(output)
             setShowText(true)
             setStatus(text)
             setQty(output)
@@ -136,12 +137,12 @@ const Item = ({ itemName, prop }) => {
       <div className='itemRow'>
         <h3 className='itemElement'>{itemName}: {qty}/100</h3>
         <input type= "number" className='itemElement' placeholder="Enter qty" onChange={(e) => setInput(e.target.value)}/>
-        <button className='itemElement'onClick={checkIn}>Check In</button>
-        <button className='itemElement' onClick={checkOut}>Check Out</button>
+        <Button variant='outlined' className='itemButton' style={{margin: '15px 12.5px'}} onClick={checkIn}>Check In</Button>
+        <Button variant='outlined' className='itemButton' style={{margin: '15px 0px 15px 12.5px'}} onClick={checkOut}>Check Out</Button>
       </div>
       {showText && (
-        <div>
-          <input readOnly type="text" value={status}/>
+        <div className='itemError'>
+           {status}
         </div>
         )}
     </div>
