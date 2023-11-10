@@ -2,6 +2,7 @@ import React, { useState} from "react";
 import { useLocation } from "react-router-dom"; // Import useLocation from react-router-dom
 import "../css/App.css";
 
+
 const IndexNavBar = () => {
   const location = useLocation(); // Get the current location from react-router-dom
 
@@ -20,15 +21,22 @@ const IndexNavBar = () => {
     // Store the active link in local storage
     localStorage.setItem("activeLink", link);
   };
-
+  const linkStyle = {
+    color: 'white',
+    fontSize: 32,
+    fontStyle: 'bold',
+    padding: 30
+  };
   return (
     <div>
       <ul className="nav nav-underline">
         <li className="nav-item">
           <a
             className={`nav-link ${activeLink === "Login" ? "active" : ""}`}
+            color={'white'}
             aria-current="page"
             href="/"
+            style={linkStyle}
             onClick={() => handleLinkClick("Login")}
           >
             Login
@@ -38,6 +46,7 @@ const IndexNavBar = () => {
           <a
             className={`nav-link ${activeLink === "Create User" ? "active" : ""}`}
             href="/create-user"
+            style={linkStyle}
             onClick={() => handleLinkClick("Create User")}
           >
             Create User
@@ -47,6 +56,7 @@ const IndexNavBar = () => {
           <a
             className={`nav-link ${activeLink === "Tutorial" ? "active" : ""}`}
             href="/tutorial"
+            style={linkStyle}
             onClick={() => handleLinkClick("Tutorial")}
           >
             Tutorial

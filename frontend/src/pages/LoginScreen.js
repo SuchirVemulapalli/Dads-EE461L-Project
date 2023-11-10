@@ -1,7 +1,8 @@
 import React from 'react'
 import IndexNavBar from "../components/IndexNavBar";
 import Login from "../components/Login";
-import "../css/App.css"
+import "../css/LoginScreen.css"
+// import "../css/App.css"
 
 const LoginScreen = () => {
   return (

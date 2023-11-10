@@ -1,8 +1,16 @@
 
 .login{
     /* moves login components from navbar */
-    margin: 2% 
+    margin: 10%;
+    width:10%;
+    height:390px;
 
+}
+
+.CreateUser{
+    margin: 10%;
+    width:10%;
+    height:390px;
 }
 
 .login input{
