@@ -4,7 +4,7 @@ import CreateUser from "../components/CreateUser";
 
 const Create = () => {
   return (
-    <div className="login-align"> 
+    <div className="login-align2"> 
     <IndexNavBar></IndexNavBar>
     
     <CreateUser></CreateUser>

@@ -3,7 +3,7 @@ import axios from 'axios'
 const Leave = () => {
     const [projectID, setProjectID] = useState('')
     const [status, setStatus] = useState('')
-    const joinProject = () =>{
+    const leaveProject = () =>{
         axios
       .post(
         "http://127.0.0.1:5000/leave-project",
