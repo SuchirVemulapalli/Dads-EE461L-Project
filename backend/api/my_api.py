@@ -79,7 +79,7 @@ def getDocs():
     #what we are returning
     status = None
     hardwareMap = {} #map where key: hardwareSet number and value = map of hardware set attributes
-    projectMap = defaultdict(lambda: [0, 0]) #creates a map where: key = project id and value = arr of size 2 
+    projectMap = defaultdict(lambda: [0, 0, ""]) #creates a map where: key = project id and value = arr of size 2 
     userMap = defaultdict(list) #map where: key = projectid and value = list of users on the project
 
     if len(validProjects) != 0:
@@ -90,10 +90,11 @@ def getDocs():
                 
                 HWSet1 = doc.get("HWSet1") # number of items used in HWSet1
                 HWSet2 = doc.get("HWSet2") # number of items used in HWSet2
+                description = doc.get("description")
                 
                 userList = doc.get("users") #list of users that have access to the project
 
-                projectMap[projectid] = [HWSet1, HWSet2]
+                projectMap[projectid] = [HWSet1, HWSet2, description]
                 userMap[projectid] = userList
             else:
                 print("none") #debugging purposes
