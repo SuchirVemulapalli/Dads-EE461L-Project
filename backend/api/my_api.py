@@ -250,7 +250,7 @@ def leaveProject():
     update = {'$set': {'projects': arr}}
     result = users.update_one(filter, update)
 
-    return jsonify({"status" : "success"})
+    return jsonify({"status" : "successfully left project"})
 
 @app.route("/get-sets", methods=["POST"])
 @cross_origin()

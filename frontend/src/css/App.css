@@ -6,6 +6,14 @@
   background-color: white;
 }
 
+.login-align2{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  background-color: black;
+}
+
 .nav-link{
   color: white;
 }

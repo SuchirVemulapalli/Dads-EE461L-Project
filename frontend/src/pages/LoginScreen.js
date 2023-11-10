@@ -6,7 +6,7 @@ import "../css/LoginScreen.css"
 
 const LoginScreen = () => {
   return (
-    <div className='login-align'>
+    <div className='login-align2'>
         <IndexNavBar></IndexNavBar>
         <Login></Login>
     </div>
