@@ -43,7 +43,7 @@ const Leave = () => {
             ></input>
             <h6>{status}</h6>
             <br></br>
-            <button type="button" className="btn btn-primary" onClick={joinProject}>
+            <button type="button" className="btn btn-primary" onClick={leaveProject}>
                 Leave
             </button>
         </div>
