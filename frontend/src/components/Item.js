@@ -11,7 +11,6 @@ const Item = ({ itemName, prop }) => {
   const [input, setInput] = useState(null)
   
   //for error msg
-  const [showText, setShowText] = useState(false)
   const [status, setStatus] = useState("")
 
   const checkOut = () =>{
@@ -119,7 +118,6 @@ const Item = ({ itemName, prop }) => {
           }
           else{
             let text = data.status;
-            setShowText(true)
             setStatus(text)
             
           }
@@ -139,11 +137,7 @@ const Item = ({ itemName, prop }) => {
         <button className='itemElement'onClick={checkIn}>Check In</button>
         <button className='itemElement' onClick={checkOut}>Check Out</button>
       </div>
-      {showText && (
-        <div>
-          <input readOnly type="text" value={status}/>
-        </div>
-        )}
+        <h6>{status}</h6>
     </div>
   );
 }

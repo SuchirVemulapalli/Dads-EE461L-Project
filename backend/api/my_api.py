@@ -331,11 +331,10 @@ def checkIn_hardware():
     doc = projects.find_one({"projectID": projectid})
     prev = doc.get(set)
     
-
-    if input+quantity > 100:
-        return jsonify({"status": "Checking in more than total capacity"})
-    elif input <= 0:
+    if input <= 0:
         return jsonify({"status": "Enter a positive value"})
+    elif input+quantity > 100:
+        return jsonify({"status": "Checking in more than total capacity"})
     elif not input:
         return jsonify({"status": "Please enter a value"})
     elif prev-input < 0:
