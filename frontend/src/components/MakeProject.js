@@ -3,7 +3,7 @@ import axios from 'axios'
 const MakeProject = ({prop}) => {
     const [projectID, setProjectID] = useState('')
     const [description, setDescription] = useState('')
-
+    const [status, setStatus] =useState('')
     const createProject = () => {
         axios
       .post(
@@ -29,6 +29,7 @@ const MakeProject = ({prop}) => {
       .then((data) => {
         // Work with the JSON data here
         console.log(data);
+        setStatus(data.status)
       })
       .catch((error) => {
         // Handle errors, e.g., network errors or API errors
@@ -48,7 +49,8 @@ const MakeProject = ({prop}) => {
         type="text"
         placeholder="Description"
         onChange={(e) => setDescription(e.target.value)}
-      ></input>      
+      ></input>   
+      <h6>{status}</h6>   
       <br></br>
       <button type="button" className="btn btn-primary" onClick={createProject}> 
         Create

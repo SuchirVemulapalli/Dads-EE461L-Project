@@ -145,7 +145,7 @@ def createProject():
     
     
     if projects.count_documents({"projectID" : projectID}) > 0: #the projectid alr exists
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "project already exists"})
     else:
         #add the new document to the project collection
         doc = {
@@ -165,7 +165,7 @@ def createProject():
         arr.append(projectID)
         update = {'$set': {'projects': arr}}
         result = users.update_one(filter, update)
-        return jsonify({"status": "success"})
+        return jsonify({"status": "successfully created project"})
     
 @app.route("/join-project", methods=["POST"])
 @cross_origin()
