@@ -186,11 +186,11 @@ def joinProject():
     #adding the user to the project user list
     doc = projects.find_one({"projectID": projectID})
     if not doc:  #if the project doesn't exist
-        return jsonify({"status" : "failure"})
+        return jsonify({"status" : "the project does not exist"})
     arr = doc.get("users")
     seen = set(arr)
     if username in seen: #the user is alr in the project
-        return jsonify({"status" : "failure"})
+        return jsonify({"status" : "user already in project"})
     arr.append(username)
     filter = {'projectID' : projectID}
     update = {'$set': {'users': arr}}
@@ -201,13 +201,13 @@ def joinProject():
     arr = doc.get("projects")
     seen = set(arr)
     if projectID in seen: #the user is alr in the project
-        return jsonify({"status" : "failure"})
+        return jsonify({"status" : "user already in project"})
     arr.append(projectID)
     filter = {"user": username}
     update = {'$set': {'projects': arr}}
     result = users.update_one(filter, update)
 
-    return jsonify({"status" : "success"})
+    return jsonify({"status" : "successfully joined project"})
 
 @app.route("/leave-project", methods=["POST"])
 @cross_origin()

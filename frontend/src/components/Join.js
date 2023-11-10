@@ -3,6 +3,7 @@ import axios from 'axios'
 import JoinProject from "../pages/JoinProject";
 const Join = () => {
     const [projectID, setProjectID] = useState('')
+    const [status, setStatus] = useState('')
     const joinProject = () =>{
         axios
       .post(
@@ -26,7 +27,7 @@ const Join = () => {
       })
       .then((data) => {
         // Work with the JSON data here
-        console.log(data);
+        setStatus(data.status)
       })
       .catch((error) => {
         // Handle errors, e.g., network errors or API errors
@@ -40,6 +41,7 @@ const Join = () => {
                 placeholder="Project ID"
                 onChange={(e) => setProjectID(e.target.value)}
             ></input>
+            <h6>{status}</h6>
             <br></br>
             <button type="button" className="btn btn-primary" onClick={joinProject}>
                 Join
