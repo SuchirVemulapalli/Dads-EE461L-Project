@@ -16,7 +16,6 @@ const Item = ({ itemName, prop }) => {
   const checkOut = () =>{
     if (!input){
       let text = "error";
-      setShowText(true)
       setStatus(text)
     }
     else{
@@ -52,14 +51,12 @@ const Item = ({ itemName, prop }) => {
             let output = data.output;
             let text = input + " hardware checked out";
             setQty(output)
-            setShowText(true)
             setStatus(text)
             setQty(output)
 
           }
           else{
             let text = data.status;
-            setShowText(true)
             setStatus(text)
             
           }
@@ -75,7 +72,6 @@ const Item = ({ itemName, prop }) => {
   const checkIn = () =>{
     if (!input){
       let text = "error";
-      setShowText(true)
       setStatus(text)
     }
     else{
@@ -111,7 +107,6 @@ const Item = ({ itemName, prop }) => {
             let output = data.output;
             let text = input + " hardware checked in";
             setQty(output)
-            setShowText(true)
             setStatus(text)
             setQty(output)
 
