@@ -47,6 +47,20 @@ def test_create_user(client):
     result = collection.find_one(query)
     check.equal(result is not None, True, "User is not being added to the database")
 
+def test_login(client):
+    username = "asamant"  
+    password = "Temp123"
+    query = {
+        'user': username,
+        'pass': password
+    }
+    response = client.post("/login", json=query)
+
+    # Assuming the expected response is a JSON object with a "status" field
+    data = json.loads(response.get_data(as_text=True))
+    assert data["status"] == "success"
+
+
 def test_initialized_database(client):
     projectDB = mongo_test_client["ProjectData"]
     hardware = projectDB["HardwareSets"]
@@ -115,7 +129,7 @@ def test_create_new_project(client):
     # Assert that the project exists in the collection
     check.equal(result is not None, True, "Project was not added to the database")
 
-def test_checkout_HW1(client):
+def test_checkout(client):
     db = mongo_test_client['ProjectData']
     hardware = db['HardwareSets']
     projects = db['Projects']
@@ -150,6 +164,8 @@ def test_checkout_HW1(client):
     updated_project_doc = projects.find_one({"projectID": projectid})
     updated_allocation = updated_project_doc.get(set_id_to_update)
     check.equal(updated_allocation, checkout, "Checkout is not allocating correctly")
+
+
 
      
 def test_query_available(client):
@@ -188,7 +204,45 @@ def test_query_available(client):
 
 
     
+def test_checkin(client):
+    db = mongo_test_client['ProjectData']
+    hardware = db['HardwareSets']
+    projects = db['Projects']
 
+     # Document to update
+    set_id_to_update = "HWSet1"
+
+    # Value to insert into the "capacity" field
+    checkin = 10  # Replace this with the desired value
+    projectid = "test_project"
+
+    #Grab current availability
+    doc = hardware.find_one({"setID": set_id_to_update})
+    availability = doc.get("quantity")
+    availability = int(availability)
+
+    #Grab current allocation
+    updated_project_doc = projects.find_one({"projectID": projectid})
+    initial_allocation = updated_project_doc.get(set_id_to_update)
+    
+    #Update using API
+    user_data = {
+        "set": set_id_to_update,
+        "input": str(checkin),
+        "projectid": projectid
+    }
+
+    response = client.post("/checkIn", json=user_data)
+
+    # Check the updated value
+    updated_doc = hardware.find_one({"setID": set_id_to_update})
+    updated_availability = updated_doc.get("quantity")
+    updated_availability = int(updated_availability)
+    check.equal(updated_availability, (availability+checkin), "Checkin is not adding correctly")
+
+    updated_project_doc = projects.find_one({"projectID": projectid})
+    updated_allocation = updated_project_doc.get(set_id_to_update)
+    check.equal(updated_allocation, (initial_allocation-checkin), "Checkout is not subtracting allocating correctly")
 
     
 
