@@ -5,9 +5,9 @@ import axios from 'axios';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-    const [quantity1, setQuantity1] = useState(0)
+    const [quantity1, setQuantity1] = useState(100)
     const [capacity1, setCapacity1] = useState(100)
-    const [quantity2, setQuantity2] = useState(0)
+    const [quantity2, setQuantity2] = useState(100)
     const [capacity2, setCapacity2] = useState(100)
     
     const handleClick = () => {  

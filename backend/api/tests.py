@@ -1,6 +1,8 @@
 import pytest
 import pytest_check as check
 import json
+
+from flask import jsonify
 from pymongo import MongoClient
 from my_api import app
 
@@ -247,7 +249,71 @@ def test_checkin(client):
     
 
 
-    
+def test_join_project_existing_user(client):
+    db = mongo_test_client['UserInfo']
+    db2 = mongo_test_client['ProjectData']
+    projects = db2['Projects']
+    users = db['Users']
+
+    #doc = projects.find_one({"projectID": projectID})
+
+
+    payload = {
+        "projectID": "test_project",
+        "description": "Test project description",
+        "user": "asamant",
+        "HWSet1": 0,
+        "HWSet2": 0
+    }
+    doc = projects.find_one({"projectID": "test_project"})
+    arr = doc.get("users")
+    seen = str(arr)
+
+    if "asamant" in seen:  # the user is alr in the project
+        response = client.post('/join-project', json=payload)
+
+    # Check if the user is already in the project
+    #check.equal(response.status_code, 200)
+    check.equal(response.json['status'], 'user already in project')
+
+def test_already_left_project(client):
+    db = mongo_test_client['UserInfo']
+    db2 = mongo_test_client['ProjectData']
+    projects = db2['Projects']
+    users = db['Users']
+
+    set_id_to_update = ""
+
+    # Value to insert into the "capacity" field
+    new_users = ""  # Replace this with the desired value
+
+    # Update the document with the new capacity value
+
+    payload = {
+        "projectID": "test_project",
+        "description": "Test project description",
+        "users": "",
+        "HWSet1": 0,
+        "HWSet2": 0
+    }
+    new_empty_str = ""
+    # Verify that the update was successful
+
+    projects.update_one(
+        {"projects": "test_project"},
+        {"$set": {"users": new_empty_str}}
+    )
+    doc = projects.find_one({"projectID": "test_project"})
+    doc['users'] = ''
+    arr = doc.get("users")
+
+    if arr not in doc:
+        response = client.post('/leave-project', json=payload)
+
+    # Check if the user is already in the project
+    #check.equal(response.status_code, 200)
+    check.equal(response.json['status'], 'user not in project')
+
 
 
 
