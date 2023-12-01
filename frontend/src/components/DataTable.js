@@ -61,6 +61,7 @@ const DataTable = () => {
             console.error('Error fetching data:', error);
         });
     }
+
     useEffect(() => {
         getData()
         rerender()
@@ -90,6 +91,7 @@ const DataTable = () => {
     .then((data) => {
       // Work with the JSON data here
       getData()
+      rerender()
       console.log(data);
     })
     .catch((error) => {

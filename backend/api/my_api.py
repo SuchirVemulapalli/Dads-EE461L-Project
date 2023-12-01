@@ -217,6 +217,7 @@ def leaveProject():
     print("server received")
     projectDB = client['ProjectData']
     userDB = client['UserInfo']
+    hardware = projectDB['HardwareSets']
 
     #getting collection information
     projects = projectDB['Projects']
@@ -236,9 +237,25 @@ def leaveProject():
     if username not in seen: #the user is not in the project
         return jsonify({"status" : "user not in project"})
     arr.remove(username)
-    filter = {'projectID' : projectID}
+
     if (len(arr) == 0):
-        result = projects.delete_one(filter)
+        doc = projects.find_one({"projectID": projectID})
+        amount1 = doc.get("HWSet1")
+        amount2 = doc.get("HWSet2")
+        
+        filter = {'setID' : "HWSet1"}
+        filter2 = {'setID' : "HWSet2"}
+        hardwareDoc = hardware.find_one(filter)
+        hardwareDoc2 = hardware.find_one(filter2)
+        prev1 = hardwareDoc.get("quantity")
+        prev2 = hardwareDoc2.get("quantity")
+
+        update = {'$set': {'quantity': amount1 + prev1}}
+        update2 = {'$set': {'quantity': amount2 + prev2}}
+        hardware.update_one(filter, update)
+        hardware.update_one(filter2, update2)
+
+        result = projects.delete_one({"projectID": projectID})
         
         #Prints to console if Project was successfully deleted when no user owns project
         if result.deleted_count == 1:
@@ -247,7 +264,7 @@ def leaveProject():
             print("Document not found or not deleted.")
     else:
         update = {'$set': {'users': arr}}
-        projects.update_one(filter, update)
+        projects.update_one({"projectID": projectID}, update)
     
 
     #removing the project to the user's project list
